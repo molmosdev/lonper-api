@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import _ from "npm:lodash@4.17.21";
+import _ from "@lodash";
 
 class Case {
   /**

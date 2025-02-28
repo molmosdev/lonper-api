@@ -1,4 +1,4 @@
-import config from "../config.ts";
+import config from "@api/config.ts";
 
 // deno-lint-ignore no-explicit-any
 type Record = { [key: string]: any };
