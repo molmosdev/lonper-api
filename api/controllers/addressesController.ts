@@ -1,4 +1,4 @@
-import express from "npm:express@4.18.2";
+import express from "@express";
 import config from "@api/config.ts";
 import Case from "@utils/case.ts";
 import { IRequestAddress } from "@lonper/types";
