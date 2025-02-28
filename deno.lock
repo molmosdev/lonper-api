@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "npm:@lonper/types@*": "0.0.4",
     "npm:@supabase/auth-js@2.68.0": "2.68.0",
     "npm:@supabase/functions-js@2.4.4": "2.4.4",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
@@ -8,9 +9,13 @@
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
-    "npm:express@4.18.2": "4.18.2"
+    "npm:express@4.18.2": "4.18.2",
+    "npm:lodash@4.17.21": "4.17.21"
   },
   "npm": {
+    "@lonper/types@0.0.4": {
+      "integrity": "sha512-NyOKyFjGtzQPOSvV2DYyTZgJQLkUbIxm1WlqaEmrM0l+KCeaL+ninWpIbk9khiwkYGds5ZYb/3HaFVQPvfGERQ=="
+    },
     "@supabase/auth-js@2.68.0": {
       "integrity": "sha512-odG7nb7aOmZPUXk6SwL2JchSsn36Ppx11i2yWMIc/meUO2B2HK9YwZHPK06utD9Ql9ke7JKDbwGin/8prHKxxQ==",
       "dependencies": [
@@ -280,6 +285,9 @@
     },
     "ipaddr.js@1.9.1": {
       "integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="
+    },
+    "lodash@4.17.21": {
+      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
     },
     "math-intrinsics@1.1.0": {
       "integrity": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="
