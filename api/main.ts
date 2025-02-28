@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { swaggerUI } from "@hono/swagger-ui";
 import addressesRouter from "@routers/addressesRouter.ts";
+import authRouter from "@routers/authRouter.ts";
 import { serveStatic } from "hono/deno";
 import config from "@config";
 import { basicAuth } from "hono/basic-auth";
@@ -41,7 +42,10 @@ app.use("/docs/json", serveStatic({ path: "./api/swagger.json" }));
 // Use the middleware to serve Swagger UI at /docs/ui
 app.get("/docs/ui", swaggerUI({ url: "/docs/json" }));
 
+// Auth router
+app.route("/api/v2/auth", authRouter);
+
 // Addresses router
-app.route("/api/v1/addresses", addressesRouter);
+app.route("/api/v2/addresses", addressesRouter);
 
 Deno.serve(app.fetch);

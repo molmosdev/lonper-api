@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import config from "@config";
 import Case from "@utils/case.ts";
-import { IRequestAddress } from "@lonper/types";
+import { IRequestAddress, User } from "@lonper/types";
 
 class AddressesController {
   /**
@@ -49,13 +49,13 @@ class AddressesController {
    * @returns A JSON response with the addresses or an error message.
    */
   static async getAddresses(c: Context) {
-    const email = c.req.header("user-email");
+    const user: User = c.get("user");
 
     try {
       const { data: addresses, error } = await config.database
         .from("ADDRESSES")
         .select("*")
-        .eq("CLIENT_EMAIL", email);
+        .eq("CLIENT_EMAIL", user.email);
       if (error) {
         console.error("error", error);
         return c.json(
