@@ -1,11 +1,12 @@
 import { Hono } from "hono";
+import config from "@config";
 import { cors } from "hono/cors";
 import { swaggerUI } from "@hono/swagger-ui";
+import { serveStatic } from "hono/deno";
+import { basicAuth } from "hono/basic-auth";
 import addressesRouter from "@routers/addressesRouter.ts";
 import authRouter from "@routers/authRouter.ts";
-import { serveStatic } from "hono/deno";
-import config from "@config";
-import { basicAuth } from "hono/basic-auth";
+import articlesRouter from "@routers/articlesRouter.ts";
 
 const app = new Hono();
 
@@ -47,5 +48,8 @@ app.route("/api/v2/auth", authRouter);
 
 // Addresses router
 app.route("/api/v2/addresses", addressesRouter);
+
+// Articles router
+app.route("/api/v2/articles", articlesRouter);
 
 Deno.serve(app.fetch);

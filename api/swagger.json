@@ -100,6 +100,128 @@
           }
         },
         "required": ["code", "message"]
+      },
+      "Article": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the article"
+          },
+          "article": {
+            "type": "string",
+            "description": "Article code"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the article"
+          },
+          "familyCode": {
+            "type": "string",
+            "description": "Family code of the article"
+          },
+          "familyDesc": {
+            "type": "string",
+            "description": "Family description of the article"
+          },
+          "subfamilyCode": {
+            "type": "string",
+            "description": "Subfamily code of the article"
+          },
+          "subfamilyDesc": {
+            "type": "string",
+            "description": "Subfamily description of the article"
+          },
+          "blqC": {
+            "type": "number",
+            "description": "Block C value"
+          },
+          "blqV": {
+            "type": "number",
+            "description": "Block V value"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the article"
+          },
+          "subtype": {
+            "type": "string",
+            "description": "Subtype of the article"
+          },
+          "shortName": {
+            "type": "string",
+            "description": "Short name of the article",
+            "nullable": true
+          },
+          "blqVName": {
+            "type": "string",
+            "description": "Block V name",
+            "nullable": true
+          },
+          "lonRate": {
+            "type": "string",
+            "description": "Lon rate of the article"
+          },
+          "lonGroup": {
+            "type": "string",
+            "description": "Lon group of the article"
+          },
+          "lonEdging": {
+            "type": "string",
+            "description": "Lon edging of the article"
+          },
+          "salePriceBeforeDiscount": {
+            "type": "number",
+            "description": "Sale price before discount",
+            "nullable": true
+          },
+          "salePrice": {
+            "type": "number",
+            "description": "Sale price of the article"
+          },
+          "unsubscribed": {
+            "type": "number",
+            "description": "Unsubscribed value"
+          },
+          "crtlStk": {
+            "type": "number",
+            "description": "Control stock value"
+          },
+          "dto1": {
+            "type": "number",
+            "description": "Discount 1"
+          },
+          "dto2": {
+            "type": "number",
+            "description": "Discount 2"
+          },
+          "dto3": {
+            "type": "number",
+            "description": "Discount 3"
+          }
+        },
+        "required": [
+          "id",
+          "article",
+          "name",
+          "familyCode",
+          "familyDesc",
+          "subfamilyCode",
+          "subfamilyDesc",
+          "blqC",
+          "blqV",
+          "type",
+          "subtype",
+          "lonRate",
+          "lonGroup",
+          "lonEdging",
+          "salePrice",
+          "unsubscribed",
+          "crtlStk",
+          "dto1",
+          "dto2",
+          "dto3"
+        ]
       }
     }
   },
@@ -111,6 +233,10 @@
     {
       "name": "Addresses",
       "description": "Address related endpoints"
+    },
+    {
+      "name": "Articles",
+      "description": "Articles related endpoints"
     }
   ],
   "paths": {
@@ -467,6 +593,58 @@
           },
           "500": {
             "description": "Server error while deleting the address."
+          }
+        }
+      }
+    },
+    "/api/v2/articles/getArticlesByIds": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "Get articles by their IDs",
+        "description": "This endpoint allows retrieving articles by their IDs.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "articleIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of article IDs"
+                  }
+                },
+                "required": ["articleIds"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Articles retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Article"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
