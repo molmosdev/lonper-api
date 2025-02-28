@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "http://localhost:8000",
-      "description": "Servidor local de Deno/Hono"
+      "description": "Local server"
     },
     {
       "url": "https://api.lonper.molmos.dev",
