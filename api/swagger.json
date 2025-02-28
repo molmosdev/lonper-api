@@ -222,6 +222,107 @@
           "dto2",
           "dto3"
         ]
+      },
+      "Awning": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the awning"
+          },
+          "awningModelId": {
+            "type": "string",
+            "description": "Awning model ID",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "description": "Value of the awning"
+          },
+          "familyCode": {
+            "type": "string",
+            "description": "Family code of the awning",
+            "nullable": true
+          },
+          "familyDesc": {
+            "type": "string",
+            "description": "Family description of the awning",
+            "nullable": true
+          },
+          "subfamilyCode": {
+            "type": "string",
+            "description": "Subfamily code of the awning",
+            "nullable": true
+          },
+          "subfamilyDesc": {
+            "type": "string",
+            "description": "Subfamily description of the awning",
+            "nullable": true
+          }
+        },
+        "required": ["id", "value"]
+      },
+      "AwningPrice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the awning price"
+          },
+          "awning": {
+            "type": "string",
+            "description": "Awning code"
+          },
+          "model": {
+            "type": "string",
+            "description": "Model of the awning"
+          },
+          "tarp": {
+            "type": "string",
+            "description": "Tarp of the awning"
+          },
+          "line": {
+            "type": "integer",
+            "description": "Line of the awning"
+          },
+          "exit": {
+            "type": "integer",
+            "description": "Exit of the awning"
+          },
+          "rate": {
+            "type": "number",
+            "description": "Rate of the awning"
+          },
+          "rateBeforeDiscount": {
+            "type": "number",
+            "description": "Rate before discount"
+          },
+          "dto1": {
+            "type": "number",
+            "description": "Discount 1"
+          },
+          "dto2": {
+            "type": "number",
+            "description": "Discount 2"
+          },
+          "dto3": {
+            "type": "number",
+            "description": "Discount 3"
+          }
+        },
+        "required": [
+          "id",
+          "awning",
+          "model",
+          "tarp",
+          "line",
+          "exit",
+          "rate",
+          "rateBeforeDiscount",
+          "dto1",
+          "dto2",
+          "dto3"
+        ]
       }
     }
   },
@@ -237,6 +338,10 @@
     {
       "name": "Articles",
       "description": "Articles related endpoints"
+    },
+    {
+      "name": "Awnings",
+      "description": "Awnings related endpoints"
     }
   ],
   "paths": {
@@ -645,6 +750,344 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/getAwnings": {
+      "get": {
+        "tags": ["Awnings"],
+        "summary": "Get all awnings",
+        "description": "This endpoint returns a list of all stored awnings.",
+        "responses": {
+          "200": {
+            "description": "List of awnings obtained successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Awning"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while getting awnings."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/getAwning/{id}": {
+      "get": {
+        "tags": ["Awnings"],
+        "summary": "Get a specific awning by ID",
+        "description": "This endpoint returns a specific awning by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the awning to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Awning retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Awning"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Awning not found"
+          },
+          "500": {
+            "description": "Server error while getting awning."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/postAwning": {
+      "post": {
+        "tags": ["Awnings"],
+        "summary": "Create a new awning",
+        "description": "This endpoint allows creating a new awning.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Awning"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Awning created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Awning"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. Check the input data format."
+          },
+          "500": {
+            "description": "Server error while creating the awning."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/putAwning": {
+      "put": {
+        "tags": ["Awnings"],
+        "summary": "Update an existing awning",
+        "description": "This endpoint allows updating data for an existing awning.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Awning"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Awning updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Awning"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. Check the input data format or the awning ID."
+          },
+          "404": {
+            "description": "Awning not found with the provided ID."
+          },
+          "500": {
+            "description": "Server error while updating the awning."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/deleteAwning/{id}": {
+      "delete": {
+        "tags": ["Awnings"],
+        "summary": "Delete an awning",
+        "description": "This endpoint allows deleting an awning using its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the awning to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Awning deleted successfully (no content in response)."
+          },
+          "400": {
+            "description": "Invalid request. Check if the awning ID is valid."
+          },
+          "404": {
+            "description": "Awning not found with the provided ID."
+          },
+          "500": {
+            "description": "Server error while deleting the awning."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/duplicateFields": {
+      "post": {
+        "tags": ["Awnings"],
+        "summary": "Duplicate awning fields",
+        "description": "This endpoint allows duplicating awning fields.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "duplicateId": {
+                    "type": "string",
+                    "description": "ID of the awning to duplicate"
+                  },
+                  "newAwningId": {
+                    "type": "string",
+                    "description": "ID of the new awning"
+                  }
+                },
+                "required": ["duplicateId", "newAwningId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fields duplicated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Success message"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. Check the input data format."
+          },
+          "500": {
+            "description": "Server error while duplicating awning fields."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/getAwningsByFieldId/{fieldId}": {
+      "get": {
+        "tags": ["Awnings"],
+        "summary": "Get awnings by field ID",
+        "description": "This endpoint returns awnings by field ID.",
+        "parameters": [
+          {
+            "name": "fieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field ID to retrieve awnings by"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Awnings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Awning"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. Check if the field ID is valid."
+          },
+          "500": {
+            "description": "Server error while getting awnings by field ID."
+          }
+        }
+      }
+    },
+    "/api/v2/awnings/getAwningPrice/{model}/{line}/{exit}/{tarp}/{ral}/{familyCode}": {
+      "get": {
+        "tags": ["Awnings"],
+        "summary": "Get awning price",
+        "description": "This endpoint returns the price of an awning.",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model of the awning"
+          },
+          {
+            "name": "line",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Line of the awning"
+          },
+          {
+            "name": "exit",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Exit of the awning"
+          },
+          {
+            "name": "tarp",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tarp of the awning"
+          },
+          {
+            "name": "ral",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "RAL color of the awning"
+          },
+          {
+            "name": "familyCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Family code of the awning"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Awning price retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AwningPrice"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while getting awning price."
           }
         }
       }

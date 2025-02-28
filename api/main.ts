@@ -7,6 +7,7 @@ import { basicAuth } from "hono/basic-auth";
 import addressesRouter from "@routers/addressesRouter.ts";
 import authRouter from "@routers/authRouter.ts";
 import articlesRouter from "@routers/articlesRouter.ts";
+import awningsRouter from "@routers/awningsRouter.ts";
 
 const app = new Hono();
 
@@ -51,5 +52,8 @@ app.route("/api/v2/addresses", addressesRouter);
 
 // Articles router
 app.route("/api/v2/articles", articlesRouter);
+
+// Awnings router
+app.route("/api/v2/awnings", awningsRouter);
 
 Deno.serve(app.fetch);
