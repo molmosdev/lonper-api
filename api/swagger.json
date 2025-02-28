@@ -11,14 +11,102 @@
       "description": "Servidor local de Deno/Hono"
     }
   ],
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the address"
+          },
+          "streetAndNumber": {
+            "type": "string",
+            "description": "Street and number of the address"
+          },
+          "postalCode": {
+            "type": "integer",
+            "description": "Postal code of the address"
+          },
+          "province": {
+            "type": "string",
+            "description": "Province of the address"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the address"
+          }
+        },
+        "required": [
+          "id",
+          "city",
+          "streetAndNumber",
+          "postalCode",
+          "province",
+          "country"
+        ]
+      },
+      "NewAddressPayload": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "City of the new address"
+          },
+          "streetAndNumber": {
+            "type": "string",
+            "description": "Street and number of the new address"
+          },
+          "postalCode": {
+            "type": "integer",
+            "description": "Postal code of the new address"
+          },
+          "province": {
+            "type": "string",
+            "description": "Province of the new address"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the new address"
+          }
+        },
+        "required": [
+          "city",
+          "streetAndNumber",
+          "postalCode",
+          "province",
+          "country"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "HTTP error code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error message"
+          }
+        },
+        "required": ["code", "message"]
+      }
+    }
+  },
   "paths": {
     "/api/v1/addresses/getAddresses": {
       "get": {
-        "summary": "Obtener todas las direcciones",
-        "description": "Este endpoint devuelve una lista de todas las direcciones almacenadas.",
+        "summary": "Get all addresses",
+        "description": "This endpoint returns a list of all stored addresses.",
         "responses": {
           "200": {
-            "description": "Lista de direcciones obtenida exitosamente",
+            "description": "List of addresses obtained successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -31,15 +119,15 @@
             }
           },
           "500": {
-            "description": "Error del servidor al obtener las direcciones."
+            "description": "Server error while getting addresses."
           }
         }
       }
     },
     "/api/v1/addresses/postAddress": {
       "post": {
-        "summary": "Crear una nueva dirección",
-        "description": "Este endpoint permite crear una nueva dirección.",
+        "summary": "Create a new address",
+        "description": "This endpoint allows creating a new address.",
         "requestBody": {
           "required": true,
           "content": {
@@ -52,7 +140,7 @@
         },
         "responses": {
           "201": {
-            "description": "Dirección creada exitosamente",
+            "description": "Address created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -62,7 +150,7 @@
             }
           },
           "400": {
-            "description": "Solicitud inválida. Revise el formato de los datos de entrada.",
+            "description": "Invalid request. Check the input data format.",
             "content": {
               "application/json": {
                 "schema": {
@@ -72,15 +160,15 @@
             }
           },
           "500": {
-            "description": "Error del servidor al crear la dirección."
+            "description": "Server error while creating the address."
           }
         }
       }
     },
     "/api/v1/addresses/putAddress": {
       "put": {
-        "summary": "Actualizar una dirección existente",
-        "description": "Este endpoint permite actualizar los datos de una dirección existente.",
+        "summary": "Update an existing address",
+        "description": "This endpoint allows updating data for an existing address.",
         "requestBody": {
           "required": true,
           "content": {
@@ -93,7 +181,7 @@
         },
         "responses": {
           "200": {
-            "description": "Dirección actualizada exitosamente",
+            "description": "Address updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -103,7 +191,7 @@
             }
           },
           "400": {
-            "description": "Solicitud inválida. Revise el formato de los datos de entrada o el ID de la dirección.",
+            "description": "Invalid request. Check the input data format or the address ID.",
             "content": {
               "application/json": {
                 "schema": {
@@ -113,23 +201,23 @@
             }
           },
           "404": {
-            "description": "Dirección no encontrada con el ID proporcionado."
+            "description": "Address not found with the provided ID."
           },
           "500": {
-            "description": "Error del servidor al actualizar la dirección."
+            "description": "Server error while updating the address."
           }
         }
       }
     },
     "/api/v1/addresses/deleteAddress": {
       "delete": {
-        "summary": "Eliminar una dirección",
-        "description": "Este endpoint permite eliminar una dirección utilizando su ID.",
+        "summary": "Delete an address",
+        "description": "This endpoint allows deleting an address using its ID.",
         "parameters": [
           {
             "name": "id",
             "in": "query",
-            "description": "ID de la dirección a eliminar",
+            "description": "ID of the address to delete",
             "required": true,
             "schema": {
               "type": "integer",
@@ -139,10 +227,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Dirección eliminada exitosamente (sin contenido en la respuesta)."
+            "description": "Address deleted successfully (no content in response)."
           },
           "400": {
-            "description": "Solicitud inválida. Revise que el ID de la dirección sea válido.",
+            "description": "Invalid request. Check if the address ID is valid.",
             "content": {
               "application/json": {
                 "schema": {
@@ -152,63 +240,12 @@
             }
           },
           "404": {
-            "description": "Dirección no encontrada con el ID proporcionado."
+            "description": "Address not found with the provided ID."
           },
           "500": {
-            "description": "Error del servidor al eliminar la dirección."
+            "description": "Server error while deleting the address."
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Address": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Identificador único de la dirección"
-          },
-          "street": {
-            "type": "string",
-            "description": "Calle de la dirección"
-          },
-          "city": {
-            "type": "string",
-            "description": "Ciudad de la dirección"
-          }
-        },
-        "required": ["id", "street", "city"]
-      },
-      "NewAddressPayload": {
-        "type": "object",
-        "properties": {
-          "street": {
-            "type": "string",
-            "description": "Calle de la nueva dirección"
-          },
-          "city": {
-            "type": "string",
-            "description": "Ciudad de la nueva dirección"
-          }
-        },
-        "required": ["street", "city"]
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Código de error HTTP"
-          },
-          "message": {
-            "type": "string",
-            "description": "Mensaje detallado del error"
-          }
-        },
-        "required": ["code", "message"]
       }
     }
   }
