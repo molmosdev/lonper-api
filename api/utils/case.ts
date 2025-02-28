@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import _ from "@lodash";
+import _ from "lodash";
 
 class Case {
   /**
@@ -45,9 +45,10 @@ class Case {
   /**
    * Check if a string is a UUID
    * @param str - The string to check
+   * @private
    * @returns True if the string is a UUID, false otherwise
    */
-  static isUUID(str: string): boolean {
+  private static isUUID(str: string): boolean {
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(str);

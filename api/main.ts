@@ -1,11 +1,7 @@
-import express from "@express";
+import { Hono } from "hono";
 
-const app = express();
+const app = new Hono();
 
-app.get("/", (_req: express.Request, res: express.Response) => {
-  res.send("Hello World!");
-});
+app.get("/", (c) => c.text("Hello Deno!"));
 
-app.listen(8000);
-
-export default app;
+Deno.serve(app.fetch);
