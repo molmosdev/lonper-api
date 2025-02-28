@@ -7,7 +7,7 @@ export default {
     password: Deno.env.get("SWAGGER_PASSWORD"),
   },
   database: createClient(
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    Deno.env.get("SUPABASE_KEY")!
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   ),
 };

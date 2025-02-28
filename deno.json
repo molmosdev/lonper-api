@@ -1,10 +1,11 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch --env-file=.env -A api/main.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
     "hono": "npm:hono@4.7.2",
+    "@hono/swagger-ui": "npm:@hono/swagger-ui@0.5.0",
     "lodash": "npm:lodash@4.17.21",
     "@supabase": "jsr:@supabase/supabase-js@2",
     "@lonper/types": "npm:@lonper/types@0.0.4",

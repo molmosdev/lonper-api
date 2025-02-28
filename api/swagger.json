@@ -1,0 +1,215 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Portal Lonper",
+    "version": "v1.0.0",
+    "description": "Documentación de la API de Portal Lonper."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Servidor local de Deno/Hono"
+    }
+  ],
+  "paths": {
+    "/api/v1/addresses/getAddresses": {
+      "get": {
+        "summary": "Obtener todas las direcciones",
+        "description": "Este endpoint devuelve una lista de todas las direcciones almacenadas.",
+        "responses": {
+          "200": {
+            "description": "Lista de direcciones obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al obtener las direcciones."
+          }
+        }
+      }
+    },
+    "/api/v1/addresses/postAddress": {
+      "post": {
+        "summary": "Crear una nueva dirección",
+        "description": "Este endpoint permite crear una nueva dirección.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAddressPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dirección creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Address"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida. Revise el formato de los datos de entrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor al crear la dirección."
+          }
+        }
+      }
+    },
+    "/api/v1/addresses/putAddress": {
+      "put": {
+        "summary": "Actualizar una dirección existente",
+        "description": "Este endpoint permite actualizar los datos de una dirección existente.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Address"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dirección actualizada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Address"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida. Revise el formato de los datos de entrada o el ID de la dirección.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dirección no encontrada con el ID proporcionado."
+          },
+          "500": {
+            "description": "Error del servidor al actualizar la dirección."
+          }
+        }
+      }
+    },
+    "/api/v1/addresses/deleteAddress": {
+      "delete": {
+        "summary": "Eliminar una dirección",
+        "description": "Este endpoint permite eliminar una dirección utilizando su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID de la dirección a eliminar",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Dirección eliminada exitosamente (sin contenido en la respuesta)."
+          },
+          "400": {
+            "description": "Solicitud inválida. Revise que el ID de la dirección sea válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dirección no encontrada con el ID proporcionado."
+          },
+          "500": {
+            "description": "Error del servidor al eliminar la dirección."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Identificador único de la dirección"
+          },
+          "street": {
+            "type": "string",
+            "description": "Calle de la dirección"
+          },
+          "city": {
+            "type": "string",
+            "description": "Ciudad de la dirección"
+          }
+        },
+        "required": ["id", "street", "city"]
+      },
+      "NewAddressPayload": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "Calle de la nueva dirección"
+          },
+          "city": {
+            "type": "string",
+            "description": "Ciudad de la nueva dirección"
+          }
+        },
+        "required": ["street", "city"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Código de error HTTP"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensaje detallado del error"
+          }
+        },
+        "required": ["code", "message"]
+      }
+    }
+  }
+}
