@@ -4,7 +4,7 @@ import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
   getRequestsDescription,
   postRequestDescription,
-} from "../openapi/descriptions/requestsDescriptions.ts";
+} from "@openapi/descriptions/requestsDescriptions.ts";
 
 const router = new Hono();
 

@@ -10,7 +10,7 @@ import {
   getAwningsDescription,
   postAwningDescription,
   putAwningDescription,
-} from "../openapi/descriptions/awningsDescriptions.ts";
+} from "@openapi/descriptions/awningsDescriptions.ts";
 
 const awningsRouter = new Hono();
 

@@ -14,7 +14,7 @@ import {
   putFieldsOrderDescription,
   unlinkFieldConfigForAllAwningsDescription,
   unlinkFieldConfigToAnAwningDescription,
-} from "../openapi/descriptions/fieldsDescriptions.ts";
+} from "@openapi/descriptions/fieldsDescriptions.ts";
 
 const router = new Hono();
 

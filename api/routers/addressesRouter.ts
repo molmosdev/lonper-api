@@ -6,7 +6,7 @@ import {
   getAddressesDescription,
   postAddressDescription,
   putAddressDescription,
-} from "../openapi/descriptions/addressesDescriptions.ts";
+} from "@openapi/descriptions/addressesDescriptions.ts";
 
 const router = new Hono();
 

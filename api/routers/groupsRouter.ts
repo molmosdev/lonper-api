@@ -8,7 +8,7 @@ import {
   postGroupDescription,
   putGroupDescription,
   putGroupsOrderDescription,
-} from "../openapi/descriptions/groupsDescriptions.ts";
+} from "@openapi/descriptions/groupsDescriptions.ts";
 
 const router = new Hono();
 
