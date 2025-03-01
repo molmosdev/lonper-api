@@ -10,13 +10,10 @@ import {
 
 const router = new Hono();
 
-// Login route
 router.post("/login", loginDescription, AuthController.login);
 
-// Logout route
 router.post("/logout", logoutDescription, AuthController.logout);
 
-// Send password reset email route
 router.post(
   "/sendPasswordResetEmail",
   jwtValidation,
@@ -24,7 +21,6 @@ router.post(
   AuthController.sendPasswordResetEmail,
 );
 
-// Get current user route
 router.get(
   "/getCurrentUser",
   jwtValidation,

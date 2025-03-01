@@ -10,7 +10,6 @@ import {
 
 const router = new Hono();
 
-// Get addresses route
 router.get(
   "/getAddresses",
   jwtValidation,
@@ -18,7 +17,6 @@ router.get(
   AddressesController.getAddresses,
 );
 
-// Add address route
 router.post(
   "/postAddress",
   jwtValidation,
@@ -26,7 +24,6 @@ router.post(
   AddressesController.postAddress,
 );
 
-// Update address route
 router.put(
   "/putAddress",
   jwtValidation,
@@ -34,7 +31,6 @@ router.put(
   AddressesController.putAddress,
 );
 
-// Delete address route
 router.delete(
   "/deleteAddress",
   jwtValidation,

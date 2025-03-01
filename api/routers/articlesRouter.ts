@@ -5,7 +5,6 @@ import { getArticlesByIdsDescription } from "@openapi/articlesDescriptions.ts";
 
 const router = new Hono();
 
-// Get articles by IDs route
 router.post(
   "/getArticlesByIds",
   jwtValidation,

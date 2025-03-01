@@ -14,7 +14,6 @@ import {
 
 const awningsRouter = new Hono();
 
-// Get awnings route
 awningsRouter.get(
   "/getAwnings",
   jwtValidation,
@@ -22,7 +21,6 @@ awningsRouter.get(
   AwningsController.getAwnings,
 );
 
-// Get awning route by ID
 awningsRouter.get(
   "/getAwning/:id",
   jwtValidation,
@@ -30,7 +28,6 @@ awningsRouter.get(
   AwningsController.getAwning,
 );
 
-// Post awning route
 awningsRouter.post(
   "/postAwning",
   jwtValidation,
@@ -38,7 +35,6 @@ awningsRouter.post(
   AwningsController.postAwning,
 );
 
-// Put awning route
 awningsRouter.put(
   "/putAwning",
   jwtValidation,
@@ -46,7 +42,6 @@ awningsRouter.put(
   AwningsController.putAwning,
 );
 
-// Delete awning route
 awningsRouter.delete(
   "/deleteAwning/:id",
   jwtValidation,
@@ -54,7 +49,6 @@ awningsRouter.delete(
   AwningsController.deleteAwning,
 );
 
-// Duplicate awning fields route
 awningsRouter.post(
   "/duplicateAwningFields",
   jwtValidation,
@@ -62,7 +56,6 @@ awningsRouter.post(
   AwningsController.duplicateAwningFields,
 );
 
-// Get awnings by field ID route
 awningsRouter.get(
   "/getAwningsByFieldId/:fieldId",
   jwtValidation,
@@ -70,7 +63,6 @@ awningsRouter.get(
   AwningsController.getAwningsByFieldId,
 );
 
-// Get awning price route
 awningsRouter.get(
   "/getAwningPrice/:model/:line/:exit/:tarp/:ral/:familyCode",
   jwtValidation,

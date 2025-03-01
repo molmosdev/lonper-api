@@ -37,7 +37,7 @@ class FieldsController {
         console.error("Internal server error while creating the field:", error);
         return c.json(
           { error: "Internal server error while creating the field." },
-          400
+          400,
         );
       } else {
         console.log("Field correctly created");
@@ -47,7 +47,7 @@ class FieldsController {
       console.error("Internal server error while creating the field:", error);
       return c.json(
         { error: "Internal server error while creating the field." },
-        500
+        500,
       );
     }
   }
@@ -72,11 +72,11 @@ class FieldsController {
       if (fetchError) {
         console.error(
           "Internal server error while updating the field:",
-          fetchError
+          fetchError,
         );
         return c.json(
           { error: "Internal server error while updating the field." },
-          400
+          400,
         );
       } else {
         console.log("Field correctly updated");
@@ -86,7 +86,7 @@ class FieldsController {
       console.error("Internal server error while updating the field:", error);
       return c.json(
         { error: "Internal server error while updating the field." },
-        500
+        500,
       );
     }
   }
@@ -111,7 +111,7 @@ class FieldsController {
 
       const formattedGroupFields = Case.deepConvertKeys(
         groupFields,
-        Case.toCamelCase
+        Case.toCamelCase,
       );
 
       if (
@@ -130,7 +130,7 @@ class FieldsController {
         (groupField: IField, index: number) => ({
           ...groupField,
           order: index,
-        })
+        }),
       );
 
       const { error: updateError } = await config.database
@@ -139,7 +139,7 @@ class FieldsController {
           Case.deepConvertKeys(updatedGroupFields, Case.toUpperSnakeCase),
           {
             onConflict: "ID",
-          }
+          },
         );
 
       if (updateError) {
@@ -151,11 +151,11 @@ class FieldsController {
     } catch (error) {
       console.error(
         "Internal server error while updating the field order:",
-        error
+        error,
       );
       return c.json(
         { error: "Internal server error while updating the field order." },
-        500
+        500,
       );
     }
   }
@@ -177,7 +177,7 @@ class FieldsController {
         console.error("Internal server error while deleting the field:", error);
         return c.json(
           { error: "Internal server error while deleting the field." },
-          400
+          400,
         );
       }
 
@@ -187,7 +187,7 @@ class FieldsController {
       console.error("Internal server error while deleting the field:", error);
       return c.json(
         { error: "Internal server error while deleting the field." },
-        500
+        500,
       );
     }
   }
@@ -202,40 +202,40 @@ class FieldsController {
 
       const formattedConfigs = Case.deepConvertKeys(
         configs,
-        Case.toUpperSnakeCase
+        Case.toUpperSnakeCase,
       );
 
-      const { data: currentConfigIds, error: fetchError } =
-        await config.database
-          .from("FIELDS_SUBCONFIGS")
-          .select("ID")
-          .eq("FIELD_CONFIG_ID", id);
+      const { data: currentConfigIds, error: fetchError } = await config
+        .database
+        .from("FIELDS_SUBCONFIGS")
+        .select("ID")
+        .eq("FIELD_CONFIG_ID", id);
 
       if (fetchError) {
         console.error(
           "Internal server error while fetching the field config IDs:",
-          fetchError
+          fetchError,
         );
         return c.json(
           {
             error: "Internal server error while fetching the field config IDs.",
           },
-          400
+          400,
         );
       }
 
       const currentConfigIdSet = new Set(
-        currentConfigIds.map((config) => config.ID)
+        currentConfigIds.map((config) => config.ID),
       );
       const formattedConfigIdSet = new Set(
-        formattedConfigs.map((config: { ID: string }) => config.ID)
+        formattedConfigs.map((config: { ID: string }) => config.ID),
       );
 
       const newConfigs = formattedConfigs.filter(
-        (config: { ID: string }) => !currentConfigIdSet.has(config.ID)
+        (config: { ID: string }) => !currentConfigIdSet.has(config.ID),
       );
       const deletedConfigs = Array.from(currentConfigIdSet).filter(
-        (id) => !formattedConfigIdSet.has(id)
+        (id) => !formattedConfigIdSet.has(id),
       );
       const updatedConfigs = formattedConfigs.filter((config: { ID: string }) =>
         currentConfigIdSet.has(config.ID)
@@ -265,13 +265,13 @@ class FieldsController {
         if (insertError) {
           console.error(
             "Internal server error while inserting the field config:",
-            insertError
+            insertError,
           );
           return c.json(
             {
               error: "Internal server error while inserting the field config.",
             },
-            400
+            400,
           );
         }
       }
@@ -299,11 +299,11 @@ class FieldsController {
         if (updateError) {
           console.error(
             "Internal server error while updating the field config:",
-            updateError
+            updateError,
           );
           return c.json(
             { error: "Internal server error while updating the field config." },
-            400
+            400,
           );
         }
       }
@@ -317,11 +317,11 @@ class FieldsController {
         if (deleteError) {
           console.error(
             "Internal server error while deleting the field config:",
-            deleteError
+            deleteError,
           );
           return c.json(
             { error: "Internal server error while deleting the field config." },
-            400
+            400,
           );
         }
       }
@@ -331,11 +331,11 @@ class FieldsController {
     } catch (error) {
       console.error(
         "Internal server error while updating the field configs:",
-        error
+        error,
       );
       return c.json(
         { error: "Internal server error while updating the field configs." },
-        500
+        500,
       );
     }
   }
@@ -355,11 +355,11 @@ class FieldsController {
       if (error) {
         console.error(
           "Internal server error while creating the config:",
-          error
+          error,
         );
         return c.json(
           { error: "Internal server error while creating the config." },
-          400
+          400,
         );
       }
 
@@ -369,7 +369,7 @@ class FieldsController {
       console.error("Internal server error while creating the config:", error);
       return c.json(
         { error: "Internal server error while creating the config." },
-        500
+        500,
       );
     }
   }
@@ -390,11 +390,11 @@ class FieldsController {
       if (error) {
         console.error(
           "Internal server error while deleting the config:",
-          error
+          error,
         );
         return c.json(
           { error: "Internal server error while deleting the config." },
-          400
+          400,
         );
       }
 
@@ -404,7 +404,7 @@ class FieldsController {
       console.error("Internal server error while deleting the config:", error);
       return c.json(
         { error: "Internal server error while deleting the config." },
-        500
+        500,
       );
     }
   }
@@ -424,20 +424,20 @@ class FieldsController {
 
       const formattedData = Case.deepConvertKeys(
         (data ?? []).map((item) => item["FIELD_CONFIG_ID"]),
-        Case.toCamelCase
+        Case.toCamelCase,
       );
 
       if (error) {
         console.error(
           "Internal server error while getting the active fields for the awning:",
-          error
+          error,
         );
         return c.json(
           {
             error:
               "Internal server error while getting the active fields for the awning.",
           },
-          400
+          400,
         );
       }
 
@@ -446,14 +446,14 @@ class FieldsController {
     } catch (error) {
       console.error(
         "Internal server error while getting the active fields for the awning:",
-        error
+        error,
       );
       return c.json(
         {
           error:
             "Internal server error while getting the active fields for the awning.",
         },
-        500
+        500,
       );
     }
   }
@@ -475,7 +475,7 @@ class FieldsController {
         if (error) {
           console.error(
             `Internal server error while unlinking the field config ${fieldId} from the awning ${awningId}:`,
-            error
+            error,
           );
         }
       });
@@ -489,14 +489,14 @@ class FieldsController {
       if (error) {
         console.error(
           `Internal server error while linking the field config ${fieldIdToLink} to the awning ${awningId}:`,
-          error
+          error,
         );
         return c.json(
           {
             error:
               "Internal server error while linking the field config to the awning.",
           },
-          400
+          400,
         );
       }
 
@@ -505,14 +505,14 @@ class FieldsController {
     } catch (error) {
       console.error(
         "Internal server error while linking the field config to the awning:",
-        error
+        error,
       );
       return c.json(
         {
           error:
             "Internal server error while linking the field config to the awning.",
         },
-        500
+        500,
       );
     }
   }
@@ -533,33 +533,33 @@ class FieldsController {
       if (error) {
         console.error(
           `Internal server error while unlinking the field config ${fieldIdToUnlink} from the awning ${awningId}:`,
-          error
+          error,
         );
         return c.json(
           {
             error:
               "Internal server error while unlinking the field config from the awning.",
           },
-          400
+          400,
         );
       }
 
       console.log("Field correctly unlinked from the awning");
       return c.json(
         { message: "Field correctly unlinked from the awning" },
-        200
+        200,
       );
     } catch (error) {
       console.error(
         "Internal server error while unlinking the field config from the awning:",
-        error
+        error,
       );
       return c.json(
         {
           error:
             "Internal server error while unlinking the field config from the awning.",
         },
-        500
+        500,
       );
     }
   }
@@ -579,32 +579,34 @@ class FieldsController {
       if (awningsError) {
         console.error(
           "Internal server error while getting the awnings:",
-          awningsError
+          awningsError,
         );
         return c.json(
           { error: "Internal server error while getting the awnings." },
-          400
+          400,
         );
       }
 
       const insertPromises = AWNINGS.map(async (AWNING) => {
-        const { data: existingField, error: existingFieldError } =
-          await config.database
-            .from("AWNINGS_FIELDS_CONFIGS")
-            .select("ID")
-            .match({ FIELD_CONFIG_ID: fieldConfigId, AWNING_ID: AWNING["ID"] });
+        const { data: existingField, error: existingFieldError } = await config
+          .database
+          .from("AWNINGS_FIELDS_CONFIGS")
+          .select("ID")
+          .match({ FIELD_CONFIG_ID: fieldConfigId, AWNING_ID: AWNING["ID"] });
 
         if (existingFieldError) {
           console.error(
-            `Internal server error while checking if the field config ${fieldConfigId} is already active for the awning ${AWNING["ID"]}:`,
-            existingFieldError
+            `Internal server error while checking if the field config ${fieldConfigId} is already active for the awning ${
+              AWNING["ID"]
+            }:`,
+            existingFieldError,
           );
           return;
         }
 
         if (existingField.length > 0) {
           console.log(
-            `Field config already active for the awning ${AWNING["ID"]}`
+            `Field config already active for the awning ${AWNING["ID"]}`,
           );
           return;
         }
@@ -615,8 +617,10 @@ class FieldsController {
 
         if (error) {
           console.error(
-            `Internal server error while activating the field config for the awning ${AWNING["ID"]}:`,
-            error
+            `Internal server error while activating the field config for the awning ${
+              AWNING["ID"]
+            }:`,
+            error,
           );
         }
       });
@@ -626,13 +630,13 @@ class FieldsController {
       console.log("Field config correctly activated in all awnings");
       return c.json(
         { message: "Field config correctly activated in all awnings" },
-        200
+        200,
       );
     } catch (error) {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while activating the field config." },
-        500
+        500,
       );
     }
   }
@@ -653,33 +657,33 @@ class FieldsController {
       if (error) {
         console.error(
           `Internal server error while unlinking the field config ${fieldConfigId} from all awnings:`,
-          error
+          error,
         );
         return c.json(
           {
             error:
               "Internal server error while unlinking the field config from all awnings.",
           },
-          400
+          400,
         );
       }
 
       console.log("Field correctly unlinked from all awnings");
       return c.json(
         { message: "Field correctly unlinked from all awnings" },
-        200
+        200,
       );
     } catch (error) {
       console.error(
         "Internal server error while unlinking the field config from all awnings:",
-        error
+        error,
       );
       return c.json(
         {
           error:
             "Internal server error while unlinking the field config from all awnings.",
         },
-        500
+        500,
       );
     }
   }

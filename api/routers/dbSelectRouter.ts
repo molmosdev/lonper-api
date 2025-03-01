@@ -5,7 +5,6 @@ import { getDbSelectResultsDescription } from "@openapi/dbSelectDescriptions.ts"
 
 const router = new Hono();
 
-// Get DB select results route
 router.get(
   "/getDbSelectResults",
   jwtValidation,
