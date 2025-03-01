@@ -6,7 +6,7 @@ import {
   loginDescription,
   logoutDescription,
   sendPasswordResetEmailDescription,
-} from "@openapi/authDescriptions.ts";
+} from "../openapi/descriptions/authDescriptions.ts";
 
 const router = new Hono();
 

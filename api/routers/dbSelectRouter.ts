@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import DbSelectController from "@controllers/dbSelectController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
-import { getDbSelectResultsDescription } from "@openapi/dbSelectDescriptions.ts";
+import { getDbSelectResultsDescription } from "../openapi/descriptions/dbSelectDescriptions.ts";
 
 const router = new Hono();
 

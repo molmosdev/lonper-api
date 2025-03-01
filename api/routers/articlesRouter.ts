@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import ArticlesController from "@controllers/articlesController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
-import { getArticlesByIdsDescription } from "@openapi/articlesDescriptions.ts";
+import { getArticlesByIdsDescription } from "../openapi/descriptions/articlesDescriptions.ts";
 
 const router = new Hono();
 
