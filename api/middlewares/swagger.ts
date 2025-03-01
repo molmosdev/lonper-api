@@ -1,8 +1,7 @@
-// middleware/swagger.ts
+import { Hono } from "hono";
 import { swaggerUI } from "@hono/swagger-ui";
 import { openAPISpecs } from "npm:hono-openapi@0.4.5";
 import { basicAuth } from "hono/basic-auth";
-import { Hono } from "hono";
 import config from "@config";
 
 export const setupSwagger = (app: Hono) => {
