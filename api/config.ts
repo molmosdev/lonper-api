@@ -1,7 +1,7 @@
 import { createClient } from "@supabase";
 
 export default {
-  production: false,
+  production: true,
   swagger: {
     user: Deno.env.get("SWAGGER_USER"),
     password: Deno.env.get("SWAGGER_PASSWORD"),
