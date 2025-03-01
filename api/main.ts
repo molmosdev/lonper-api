@@ -9,7 +9,7 @@ const app = new Hono();
 app.use("/api/*", corsMiddleware());
 
 // Swagger configuration
-setupSwagger(app); // Usa la función combinada setupSwagger
+setupSwagger(app);
 
 // Routers
 app.route("/api/v2", rootRouter);
