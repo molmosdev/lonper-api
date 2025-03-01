@@ -8,7 +8,7 @@ import config from "@config";
  */
 export const corsMiddleware = (): MiddlewareHandler => {
   const allowedOrigins = config.production
-    ? ["https://www.portal.lonper.molmos.dev"]
+    ? ["https://www.portal.lonper.marcolmos.dev"]
     : ["http://localhost:4200"];
 
   return cors({
