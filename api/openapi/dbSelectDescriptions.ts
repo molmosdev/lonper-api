@@ -1,6 +1,5 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 
-// Descriptions
 export const getDbSelectResultsDescription = describeRoute({
   summary: "Retrieves DB Select results",
   description:
@@ -60,7 +59,6 @@ export const getDbSelectResultsDescription = describeRoute({
       description:
         "Filter 4 in the format `columnName=value` or `columnName!=value`",
     },
-    // Add more filters as needed
   ],
   responses: {
     200: {

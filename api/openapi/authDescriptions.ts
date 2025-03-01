@@ -1,71 +1,12 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
+import {
+  emailRequestSchema,
+  errorResponseSchema,
+  loginRequestSchema,
+  successMessageSchema,
+  userResponseSchema,
+} from "@openapi/schemas.ts";
 
-// Schemas
-const loginRequestSchema = {
-  type: "object",
-  properties: {
-    email: {
-      type: "string",
-      description: "User's email address",
-      example: "lonper.dev@gmail.com",
-    },
-    password: {
-      type: "string",
-      description: "User's password",
-      example: "admin2023",
-    },
-  },
-  required: ["email", "password"],
-};
-
-const errorResponseSchema = {
-  type: "object",
-  properties: {
-    code: {
-      type: "integer",
-      format: "int32",
-      description: "HTTP error code",
-    },
-    message: {
-      type: "string",
-      description: "Detailed error message",
-    },
-  },
-  required: ["code", "message"],
-};
-
-const successMessageSchema = {
-  type: "object",
-  properties: {
-    message: {
-      type: "string",
-      description: "Success message",
-    },
-  },
-};
-
-const emailRequestSchema = {
-  type: "object",
-  properties: {
-    email: {
-      type: "string",
-      description: "User's email address",
-    },
-  },
-  required: ["email"],
-};
-
-const userResponseSchema = {
-  type: "object",
-  properties: {
-    user: {
-      type: "object",
-      description: "User data",
-    },
-  },
-};
-
-// Descriptions
 export const loginDescription = describeRoute({
   summary: "Log in a user",
   description: "This endpoint allows a user to log in.",

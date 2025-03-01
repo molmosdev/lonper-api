@@ -1,36 +1,10 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
+import {
+  addressSchema,
+  errorResponseSchema,
+  successMessageSchema,
+} from "@openapi/schemas.ts";
 
-// Schemas
-const addressSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string", description: "Address ID" },
-    city: { type: "string", description: "City name" },
-    country: { type: "string", description: "Country name" },
-    postalCode: { type: "string", description: "Postal code" },
-    province: { type: "string", description: "Province name" },
-    streetAndNumber: { type: "string", description: "Street and number" },
-  },
-  required: ["city", "country", "postalCode", "province", "streetAndNumber"],
-};
-
-const errorResponseSchema = {
-  type: "object",
-  properties: {
-    code: { type: "integer", format: "int32", description: "HTTP error code" },
-    message: { type: "string", description: "Detailed error message" },
-  },
-  required: ["code", "message"],
-};
-
-const successMessageSchema = {
-  type: "object",
-  properties: {
-    message: { type: "string", description: "Success message" },
-  },
-};
-
-// Descriptions
 export const getAddressesDescription = describeRoute({
   summary: "Get addresses",
   description: "This endpoint retrieves the addresses of the current user.",

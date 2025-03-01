@@ -1,46 +1,6 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
+import { awningSchema, errorResponseSchema } from "@openapi/schemas.ts";
 
-// Schemas
-const awningSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string", description: "Awning ID" },
-    awningModelId: {
-      type: "string",
-      description: "Awning Model ID",
-      nullable: true,
-    },
-    value: { type: "string", description: "Awning value" },
-    familyCode: { type: "string", description: "Family code", nullable: true },
-    familyDesc: {
-      type: "string",
-      description: "Family description",
-      nullable: true,
-    },
-    subfamilyCode: {
-      type: "string",
-      description: "Subfamily code",
-      nullable: true,
-    },
-    subfamilyDesc: {
-      type: "string",
-      description: "Subfamily description",
-      nullable: true,
-    },
-  },
-  required: ["id", "value"],
-};
-
-const errorResponseSchema = {
-  type: "object",
-  properties: {
-    code: { type: "integer", format: "int32", description: "HTTP error code" },
-    message: { type: "string", description: "Detailed error message" },
-  },
-  required: ["code", "message"],
-};
-
-// Descriptions
 export const getAwningsDescription = describeRoute({
   summary: "Get all awnings",
   description: "This endpoint retrieves all awnings.",
