@@ -14,13 +14,7 @@ export function getWelcomePage() {
             height: 100dvh;
             margin: 0;
             background-color: #f4f4f9;
-          }
-          .container {
             text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           }
           h1 {
             font-size: 2.5rem;
@@ -30,7 +24,7 @@ export function getWelcomePage() {
             font-size: 1.25rem;
           }
           a {
-            color: #007bff;
+            color: #89bf04;
             text-decoration: none;
           }
           a:hover {
