@@ -7,7 +7,7 @@ import {
   userResponseSchema,
 } from "@openapi/schemas.ts";
 
-export const loginDescription = describeRoute({
+export const loginDesc = describeRoute({
   summary: "Log in a user",
   description: "This endpoint allows a user to log in.",
   tags: ["Auth"],
@@ -47,7 +47,7 @@ export const loginDescription = describeRoute({
   },
 });
 
-export const logoutDescription = describeRoute({
+export const logoutDesc = describeRoute({
   summary: "Log out a user",
   description: "This endpoint allows a user to log out.",
   tags: ["Auth"],
@@ -71,7 +71,7 @@ export const logoutDescription = describeRoute({
   },
 });
 
-export const sendPasswordResetEmailDescription = describeRoute({
+export const sendPasswordResetEmailDesc = describeRoute({
   summary: "Send a password reset email",
   description: "This endpoint allows sending a password reset email.",
   tags: ["Auth"],
@@ -103,7 +103,7 @@ export const sendPasswordResetEmailDescription = describeRoute({
   },
 });
 
-export const getCurrentUserDescription = describeRoute({
+export const getCurrentUserDesc = describeRoute({
   summary: "Get the current user",
   description: "This endpoint returns the current authenticated user.",
   tags: ["Auth"],

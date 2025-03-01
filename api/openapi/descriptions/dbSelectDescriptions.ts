@@ -1,6 +1,6 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 
-export const getDbSelectResultsDescription = describeRoute({
+export const getDbSelectResultsDesc = describeRoute({
   summary: "Retrieves DB Select results",
   description:
     "This endpoint retrieves DB Select results based on search criteria.",

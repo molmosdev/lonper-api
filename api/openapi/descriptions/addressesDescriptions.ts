@@ -5,7 +5,7 @@ import {
   successMessageSchema,
 } from "@openapi/schemas.ts";
 
-export const getAddressesDescription = describeRoute({
+export const getAddressesDesc = describeRoute({
   summary: "Get addresses",
   description: "This endpoint retrieves the addresses of the current user.",
   tags: ["Addresses"],
@@ -32,7 +32,7 @@ export const getAddressesDescription = describeRoute({
   },
 });
 
-export const postAddressDescription = describeRoute({
+export const postAddressDesc = describeRoute({
   summary: "Add a new address",
   description: "This endpoint allows adding a new address.",
   tags: ["Addresses"],
@@ -64,7 +64,7 @@ export const postAddressDescription = describeRoute({
   },
 });
 
-export const putAddressDescription = describeRoute({
+export const putAddressDesc = describeRoute({
   summary: "Update an address",
   description: "This endpoint allows updating an existing address.",
   tags: ["Addresses"],
@@ -96,7 +96,7 @@ export const putAddressDescription = describeRoute({
   },
 });
 
-export const deleteAddressDescription = describeRoute({
+export const deleteAddressDesc = describeRoute({
   summary: "Delete an address",
   description: "This endpoint allows deleting an existing address.",
   tags: ["Addresses"],

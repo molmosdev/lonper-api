@@ -1,7 +1,7 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 import { articleSchema, errorResponseSchema } from "@openapi/schemas.ts";
 
-export const getArticlesByIdsDescription = describeRoute({
+export const getArticlesByIdsDesc = describeRoute({
   summary: "Get articles by IDs",
   description: "This endpoint retrieves articles by their IDs.",
   tags: ["Articles"],

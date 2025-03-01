@@ -1,7 +1,7 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 import { awningSchema, errorResponseSchema } from "@openapi/schemas.ts";
 
-export const getAwningsDescription = describeRoute({
+export const getAwningsDesc = describeRoute({
   summary: "Get all awnings",
   description: "This endpoint retrieves all awnings.",
   tags: ["Awnings"],
@@ -28,7 +28,7 @@ export const getAwningsDescription = describeRoute({
   },
 });
 
-export const getAwningDescription = describeRoute({
+export const getAwningDesc = describeRoute({
   summary: "Get a specific awning by ID",
   description: "This endpoint retrieves a specific awning by its ID.",
   tags: ["Awnings"],
@@ -69,7 +69,7 @@ export const getAwningDescription = describeRoute({
   },
 });
 
-export const postAwningDescription = describeRoute({
+export const postAwningDesc = describeRoute({
   summary: "Create a new awning",
   description: "This endpoint creates a new awning.",
   tags: ["Awnings"],
@@ -113,7 +113,7 @@ export const postAwningDescription = describeRoute({
   },
 });
 
-export const putAwningDescription = describeRoute({
+export const putAwningDesc = describeRoute({
   summary: "Update an existing awning",
   description: "This endpoint updates an existing awning.",
   tags: ["Awnings"],
@@ -157,7 +157,7 @@ export const putAwningDescription = describeRoute({
   },
 });
 
-export const deleteAwningDescription = describeRoute({
+export const deleteAwningDesc = describeRoute({
   summary: "Delete an awning",
   description: "This endpoint deletes an awning.",
   tags: ["Awnings"],
@@ -196,7 +196,7 @@ export const deleteAwningDescription = describeRoute({
   },
 });
 
-export const duplicateAwningFieldsDescription = describeRoute({
+export const duplicateAwningFieldsDesc = describeRoute({
   summary: "Duplicate awning fields",
   description: "This endpoint duplicates awning fields.",
   tags: ["Awnings"],
@@ -247,7 +247,7 @@ export const duplicateAwningFieldsDescription = describeRoute({
   },
 });
 
-export const getAwningsByFieldIdDescription = describeRoute({
+export const getAwningsByFieldIdDesc = describeRoute({
   summary: "Get awnings by field ID",
   description: "This endpoint retrieves awnings by field ID.",
   tags: ["Awnings"],
@@ -283,7 +283,7 @@ export const getAwningsByFieldIdDescription = describeRoute({
   },
 });
 
-export const getAwningPriceDescription = describeRoute({
+export const getAwningPriceDesc = describeRoute({
   summary: "Get awning price",
   description: "This endpoint retrieves the price of an awning.",
   tags: ["Awnings"],

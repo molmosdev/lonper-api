@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import RequestsController from "@controllers/requestsController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
-  getRequestsDescription,
-  postRequestDescription,
+  getRequestsDesc,
+  postRequestDesc,
 } from "@openapi/descriptions/requestsDescriptions.ts";
 
 const router = new Hono();
@@ -11,14 +11,14 @@ const router = new Hono();
 router.post(
   "/postRequest",
   jwtValidator,
-  postRequestDescription,
+  postRequestDesc,
   RequestsController.postRequest,
 );
 
 router.get(
   "/getRequests",
   jwtValidator,
-  getRequestsDescription,
+  getRequestsDesc,
   RequestsController.getRequests,
 );
 

@@ -2,18 +2,18 @@ import { Hono } from "hono";
 import FieldsController from "@controllers/fieldsController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
-  createConfigDescription,
-  deleteConfigDescription,
-  deleteFieldDescription,
-  getFieldsConfigsIdsActiveForAnAwningDescription,
-  linkFieldConfigForAllAwningsDescription,
-  linkFieldConfigToAnAwningDescription,
-  postFieldDescription,
-  putFieldConfigsDescription,
-  putFieldDescription,
-  putFieldsOrderDescription,
-  unlinkFieldConfigForAllAwningsDescription,
-  unlinkFieldConfigToAnAwningDescription,
+  createConfigDesc,
+  deleteConfigDesc,
+  deleteFieldDesc,
+  getFieldsConfigsIdsActiveForAnAwningDesc,
+  linkFieldConfigForAllAwningsDesc,
+  linkFieldConfigToAnAwningDesc,
+  postFieldDesc,
+  putFieldConfigsDesc,
+  putFieldDesc,
+  putFieldsOrderDesc,
+  unlinkFieldConfigForAllAwningsDesc,
+  unlinkFieldConfigToAnAwningDesc,
 } from "@openapi/descriptions/fieldsDescriptions.ts";
 
 const router = new Hono();
@@ -21,84 +21,79 @@ const router = new Hono();
 router.post(
   "/postField",
   jwtValidator,
-  postFieldDescription,
+  postFieldDesc,
   FieldsController.postField,
 );
 
-router.put(
-  "/putField",
-  jwtValidator,
-  putFieldDescription,
-  FieldsController.putField,
-);
+router.put("/putField", jwtValidator, putFieldDesc, FieldsController.putField);
 
 router.put(
   "/putFieldsOrder",
   jwtValidator,
-  putFieldsOrderDescription,
+  putFieldsOrderDesc,
   FieldsController.putFieldsOrder,
 );
 
 router.delete(
   "/deleteField",
   jwtValidator,
-  deleteFieldDescription,
+  deleteFieldDesc,
   FieldsController.deleteField,
 );
 
 router.put(
   "/putFieldConfigs",
   jwtValidator,
-  putFieldConfigsDescription,
+  putFieldConfigsDesc,
   FieldsController.putFieldConfigs,
 );
 
 router.post(
   "/createConfig",
   jwtValidator,
-  createConfigDescription,
+  createConfigDesc,
   FieldsController.createConfig,
 );
 
 router.delete(
   "/deleteConfig",
   jwtValidator,
-  deleteConfigDescription,
+  deleteConfigDesc,
   FieldsController.deleteConfig,
 );
 
 router.get(
   "/getFieldsConfigsIdsActiveForAnAwning/:awningId",
   jwtValidator,
-  getFieldsConfigsIdsActiveForAnAwningDescription,
+  getFieldsConfigsIdsActiveForAnAwningDesc,
   FieldsController.getFieldsConfigsIdsActiveForAnAwning,
 );
 
 router.post(
   "/linkFieldConfigToAnAwning",
   jwtValidator,
-  linkFieldConfigToAnAwningDescription,
+  linkFieldConfigToAnAwningDesc,
   FieldsController.linkFieldConfigToAnAwning,
 );
 
 router.post(
   "/unlinkFieldConfigToAnAwning",
   jwtValidator,
-  unlinkFieldConfigToAnAwningDescription,
+  unlinkFieldConfigToAnAwningDesc,
   FieldsController.unlinkFieldConfigToAnAwning,
 );
 
 router.post(
   "/linkFieldConfigForAllAwnings",
   jwtValidator,
-  linkFieldConfigForAllAwningsDescription,
+  linkFieldConfigForAllAwningsDesc,
   FieldsController.linkFieldConfigForAllAwnings,
 );
 
 router.post(
   "/unlinkFieldConfigForAllAwnings",
   jwtValidator,
-  unlinkFieldConfigForAllAwningsDescription,
+  unlinkFieldConfigForAllAwningsDesc,
   FieldsController.unlinkFieldConfigForAllAwnings,
 );
 

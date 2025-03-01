@@ -1,7 +1,7 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 import { errorResponseSchema, groupSchema } from "@openapi/schemas.ts";
 
-export const getGroupsDescription = describeRoute({
+export const getGroupsDesc = describeRoute({
   summary: "Get all groups",
   description: "This endpoint retrieves all groups.",
   tags: ["Groups"],
@@ -28,7 +28,7 @@ export const getGroupsDescription = describeRoute({
   },
 });
 
-export const getGroupsForAnAwningDescription = describeRoute({
+export const getGroupsForAnAwningDesc = describeRoute({
   summary: "Get groups for an awning",
   description: "This endpoint retrieves groups for a specific awning.",
   tags: ["Groups"],
@@ -64,7 +64,7 @@ export const getGroupsForAnAwningDescription = describeRoute({
   },
 });
 
-export const postGroupDescription = describeRoute({
+export const postGroupDesc = describeRoute({
   summary: "Create a new group",
   description: "This endpoint creates a new group.",
   tags: ["Groups"],
@@ -102,7 +102,7 @@ export const postGroupDescription = describeRoute({
   },
 });
 
-export const putGroupDescription = describeRoute({
+export const putGroupDesc = describeRoute({
   summary: "Update a group",
   description: "This endpoint updates a group.",
   tags: ["Groups"],
@@ -141,7 +141,7 @@ export const putGroupDescription = describeRoute({
   },
 });
 
-export const deleteGroupDescription = describeRoute({
+export const deleteGroupDesc = describeRoute({
   summary: "Delete a group",
   description: "This endpoint deletes a group.",
   tags: ["Groups"],
@@ -184,7 +184,7 @@ export const deleteGroupDescription = describeRoute({
   },
 });
 
-export const putGroupsOrderDescription = describeRoute({
+export const putGroupsOrderDesc = describeRoute({
   summary: "Update groups order",
   description: "This endpoint updates the order of groups.",
   tags: ["Groups"],

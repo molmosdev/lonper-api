@@ -1,7 +1,7 @@
 import { describeRoute } from "npm:hono-openapi@0.4.5";
 import { errorResponseSchema, requestSchema } from "@openapi/schemas.ts";
 
-export const postRequestDescription = describeRoute({
+export const postRequestDesc = describeRoute({
   summary: "Create a new request",
   description: "This endpoint creates a new request.",
   tags: ["Requests"],
@@ -41,7 +41,7 @@ export const postRequestDescription = describeRoute({
   },
 });
 
-export const getRequestsDescription = describeRoute({
+export const getRequestsDesc = describeRoute({
   summary: "Get requests",
   description: "This endpoint retrieves requests for the authenticated user.",
   tags: ["Requests"],

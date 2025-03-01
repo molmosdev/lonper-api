@@ -2,12 +2,12 @@ import { Hono } from "hono";
 import GroupsController from "@controllers/groupsController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
-  deleteGroupDescription,
-  getGroupsDescription,
-  getGroupsForAnAwningDescription,
-  postGroupDescription,
-  putGroupDescription,
-  putGroupsOrderDescription,
+  deleteGroupDesc,
+  getGroupsDesc,
+  getGroupsForAnAwningDesc,
+  postGroupDesc,
+  putGroupDesc,
+  putGroupsOrderDesc,
 } from "@openapi/descriptions/groupsDescriptions.ts";
 
 const router = new Hono();
@@ -15,42 +15,37 @@ const router = new Hono();
 router.get(
   "/getGroups",
   jwtValidator,
-  getGroupsDescription,
+  getGroupsDesc,
   GroupsController.getGroups,
 );
 
 router.get(
   "/getGroupsForAnAwning/:awningId",
   jwtValidator,
-  getGroupsForAnAwningDescription,
+  getGroupsForAnAwningDesc,
   GroupsController.getGroupsForAnAwning,
 );
 
 router.post(
   "/postGroup",
   jwtValidator,
-  postGroupDescription,
+  postGroupDesc,
   GroupsController.postGroup,
 );
 
-router.put(
-  "/putGroup",
-  jwtValidator,
-  putGroupDescription,
-  GroupsController.putGroup,
-);
+router.put("/putGroup", jwtValidator, putGroupDesc, GroupsController.putGroup);
 
 router.delete(
   "/deleteGroup",
   jwtValidator,
-  deleteGroupDescription,
+  deleteGroupDesc,
   GroupsController.deleteGroup,
 );
 
 router.put(
-  "/putGroupsOrder",
+  "/putGroups",
   jwtValidator,
-  putGroupsOrderDescription,
+  putGroupsOrderDesc,
   GroupsController.putGroupsOrder,
 );
 

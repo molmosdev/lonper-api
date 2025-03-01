@@ -2,14 +2,14 @@ import { Hono } from "hono";
 import AwningsController from "@controllers/awningsController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
-  deleteAwningDescription,
-  duplicateAwningFieldsDescription,
-  getAwningDescription,
-  getAwningPriceDescription,
-  getAwningsByFieldIdDescription,
-  getAwningsDescription,
-  postAwningDescription,
-  putAwningDescription,
+  deleteAwningDesc,
+  duplicateAwningFieldsDesc,
+  getAwningDesc,
+  getAwningPriceDesc,
+  getAwningsByFieldIdDesc,
+  getAwningsDesc,
+  postAwningDesc,
+  putAwningDesc,
 } from "@openapi/descriptions/awningsDescriptions.ts";
 
 const awningsRouter = new Hono();
@@ -17,56 +17,56 @@ const awningsRouter = new Hono();
 awningsRouter.get(
   "/getAwnings",
   jwtValidator,
-  getAwningsDescription,
+  getAwningsDesc,
   AwningsController.getAwnings,
 );
 
 awningsRouter.get(
   "/getAwning/:id",
   jwtValidator,
-  getAwningDescription,
+  getAwningDesc,
   AwningsController.getAwning,
 );
 
 awningsRouter.post(
   "/postAwning",
   jwtValidator,
-  postAwningDescription,
+  postAwningDesc,
   AwningsController.postAwning,
 );
 
 awningsRouter.put(
   "/putAwning",
   jwtValidator,
-  putAwningDescription,
+  putAwningDesc,
   AwningsController.putAwning,
 );
 
 awningsRouter.delete(
   "/deleteAwning/:id",
   jwtValidator,
-  deleteAwningDescription,
+  deleteAwningDesc,
   AwningsController.deleteAwning,
 );
 
 awningsRouter.post(
   "/duplicateAwningFields",
   jwtValidator,
-  duplicateAwningFieldsDescription,
+  duplicateAwningFieldsDesc,
   AwningsController.duplicateAwningFields,
 );
 
 awningsRouter.get(
   "/getAwningsByFieldId/:fieldId",
   jwtValidator,
-  getAwningsByFieldIdDescription,
+  getAwningsByFieldIdDesc,
   AwningsController.getAwningsByFieldId,
 );
 
 awningsRouter.get(
   "/getAwningPrice/:model/:line/:exit/:tarp/:ral/:familyCode",
   jwtValidator,
-  getAwningPriceDescription,
+  getAwningPriceDesc,
   AwningsController.getAwningPrice,
 );
 

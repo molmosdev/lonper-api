@@ -5,7 +5,7 @@ import {
   fieldSubconfigSchema,
 } from "@openapi/schemas.ts";
 
-export const postFieldDescription = describeRoute({
+export const postFieldDesc = describeRoute({
   summary: "Create a new field",
   description: "This endpoint creates a new field.",
   tags: ["Fields"],
@@ -54,7 +54,7 @@ export const postFieldDescription = describeRoute({
   },
 });
 
-export const putFieldDescription = describeRoute({
+export const putFieldDesc = describeRoute({
   summary: "Update a field",
   description: "This endpoint updates a field.",
   tags: ["Fields"],
@@ -103,7 +103,7 @@ export const putFieldDescription = describeRoute({
   },
 });
 
-export const putFieldsOrderDescription = describeRoute({
+export const putFieldsOrderDesc = describeRoute({
   summary: "Update fields order",
   description: "This endpoint updates the order of fields.",
   tags: ["Fields"],
@@ -156,7 +156,7 @@ export const putFieldsOrderDescription = describeRoute({
   },
 });
 
-export const deleteFieldDescription = describeRoute({
+export const deleteFieldDesc = describeRoute({
   summary: "Delete a field",
   description: "This endpoint deletes a field.",
   tags: ["Fields"],
@@ -207,7 +207,7 @@ export const deleteFieldDescription = describeRoute({
   },
 });
 
-export const putFieldConfigsDescription = describeRoute({
+export const putFieldConfigsDesc = describeRoute({
   summary: "Update field configurations",
   description: "This endpoint updates field configurations.",
   tags: ["Fields"],
@@ -262,7 +262,7 @@ export const putFieldConfigsDescription = describeRoute({
   },
 });
 
-export const createConfigDescription = describeRoute({
+export const createConfigDesc = describeRoute({
   summary: "Create a new field configuration",
   description: "This endpoint creates a new field configuration.",
   tags: ["Fields"],
@@ -314,7 +314,7 @@ export const createConfigDescription = describeRoute({
   },
 });
 
-export const deleteConfigDescription = describeRoute({
+export const deleteConfigDesc = describeRoute({
   summary: "Delete a field configuration",
   description: "This endpoint deletes a field configuration.",
   tags: ["Fields"],
@@ -365,7 +365,7 @@ export const deleteConfigDescription = describeRoute({
   },
 });
 
-export const getFieldsConfigsIdsActiveForAnAwningDescription = describeRoute({
+export const getFieldsConfigsIdsActiveForAnAwningDesc = describeRoute({
   summary: "Get active field configurations for an awning",
   description:
     "This endpoint retrieves active field configurations for an awning.",
@@ -410,7 +410,7 @@ export const getFieldsConfigsIdsActiveForAnAwningDescription = describeRoute({
   },
 });
 
-export const linkFieldConfigToAnAwningDescription = describeRoute({
+export const linkFieldConfigToAnAwningDesc = describeRoute({
   summary: "Link a field configuration to an awning",
   description: "This endpoint links a field configuration to an awning.",
   tags: ["Fields"],
@@ -467,7 +467,7 @@ export const linkFieldConfigToAnAwningDescription = describeRoute({
   },
 });
 
-export const unlinkFieldConfigToAnAwningDescription = describeRoute({
+export const unlinkFieldConfigToAnAwningDesc = describeRoute({
   summary: "Unlink a field configuration from an awning",
   description: "This endpoint unlinks a field configuration from an awning.",
   tags: ["Fields"],
@@ -522,7 +522,7 @@ export const unlinkFieldConfigToAnAwningDescription = describeRoute({
   },
 });
 
-export const linkFieldConfigForAllAwningsDescription = describeRoute({
+export const linkFieldConfigForAllAwningsDesc = describeRoute({
   summary: "Link a field configuration to all awnings",
   description: "This endpoint links a field configuration to all awnings.",
   tags: ["Fields"],
@@ -573,7 +573,7 @@ export const linkFieldConfigForAllAwningsDescription = describeRoute({
   },
 });
 
-export const unlinkFieldConfigForAllAwningsDescription = describeRoute({
+export const unlinkFieldConfigForAllAwningsDesc = describeRoute({
   summary: "Unlink a field configuration from all awnings",
   description: "This endpoint unlinks a field configuration from all awnings.",
   tags: ["Fields"],

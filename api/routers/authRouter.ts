@@ -2,29 +2,29 @@ import { Hono } from "hono";
 import AuthController from "@controllers/authController.ts";
 import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
-  getCurrentUserDescription,
-  loginDescription,
-  logoutDescription,
-  sendPasswordResetEmailDescription,
+  getCurrentUserDesc,
+  loginDesc,
+  logoutDesc,
+  sendPasswordResetEmailDesc,
 } from "@openapi/descriptions/authDescriptions.ts";
 
 const router = new Hono();
 
-router.post("/login", loginDescription, AuthController.login);
+router.post("/login", loginDesc, AuthController.login);
 
-router.post("/logout", logoutDescription, jwtValidator, AuthController.logout);
+router.post("/logout", logoutDesc, jwtValidator, AuthController.logout);
 
 router.post(
   "/sendPasswordResetEmail",
   jwtValidator,
-  sendPasswordResetEmailDescription,
+  sendPasswordResetEmailDesc,
   AuthController.sendPasswordResetEmail,
 );
 
 router.get(
   "/getCurrentUser",
   jwtValidator,
-  getCurrentUserDescription,
+  getCurrentUserDesc,
   AuthController.getCurrentUser,
 );
 
