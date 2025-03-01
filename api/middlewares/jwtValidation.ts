@@ -19,7 +19,7 @@ const jwtValidation: MiddlewareHandler = async (c: Context, next: Next) => {
     if (error || !data) {
       return c.json(
         { message: "Invalid token", error: error?.message || "Unknown error" },
-        401
+        401,
       );
     }
 
@@ -33,7 +33,7 @@ const jwtValidation: MiddlewareHandler = async (c: Context, next: Next) => {
         message: "Unauthorized",
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      401
+      401,
     );
   }
 };

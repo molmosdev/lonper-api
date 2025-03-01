@@ -13,11 +13,12 @@ class Case {
       return obj.map((value: any) => Case.deepConvertKeys(value, converter));
     } else if (_.isObject(obj)) {
       return _.mapValues(
-        _.mapKeys(obj, (_value: any, key: string) =>
-          Case.isUUID(key) ? key : converter(key)
+        _.mapKeys(
+          obj,
+          (_value: any, key: string) => Case.isUUID(key) ? key : converter(key),
         ),
         (value: any) =>
-          value === "" ? value : Case.deepConvertKeys(value, converter)
+          value === "" ? value : Case.deepConvertKeys(value, converter),
       );
     } else {
       return obj;

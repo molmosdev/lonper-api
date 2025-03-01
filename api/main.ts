@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import config from "@config";
 import { cors } from "hono/cors";
+import { openAPISpecs } from "npm:hono-openapi@0.4.5";
 import { swaggerUI } from "@hono/swagger-ui";
-import { serveStatic } from "hono/deno";
 import { basicAuth } from "hono/basic-auth";
 import addressesRouter from "@routers/addressesRouter.ts";
 import authRouter from "@routers/authRouter.ts";
@@ -29,20 +29,35 @@ app.use(
   })
 );
 
-// Basic Auth configuration for Swagger UI and JSON
-app.use(
-  "/docs/*",
+// Swagger configuration
+app.get("/docs", swaggerUI({ url: "/openapi" }));
+
+app.get(
+  "/openapi",
   basicAuth({
     username: config.swagger.user!,
     password: config.swagger.password!,
+  }),
+  openAPISpecs(app, {
+    documentation: {
+      info: {
+        title: "Portal Lonper API",
+        version: "2.0.0",
+        description: "Portal Lonper API documentation",
+      },
+      servers: [
+        {
+          url: "http://localhost:8000",
+          description: "Local server",
+        },
+        {
+          url: "https://api.lonper.molmos.dev",
+          description: "Production server",
+        },
+      ],
+    },
   })
 );
-
-// Serve the Swagger JSON file under /docs/json
-app.use("/docs/json", serveStatic({ path: "./api/swagger.json" }));
-
-// Use the middleware to serve Swagger UI at /docs/ui
-app.get("/docs/ui", swaggerUI({ url: "/docs/json" }));
 
 // Auth router
 app.route("/api/v2/auth", authRouter);

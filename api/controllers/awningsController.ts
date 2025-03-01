@@ -15,14 +15,14 @@ class AwningsController {
       const { data, error } = await config.database
         .from("AWNINGS")
         .select(
-          "*, AWNINGS_MODELS(FAMILY_CODE, FAMILY_DESC, SUBFAMILY_CODE, SUBFAMILY_DESC)"
+          "*, AWNINGS_MODELS(FAMILY_CODE, FAMILY_DESC, SUBFAMILY_CODE, SUBFAMILY_DESC)",
         );
 
       if (error) {
         console.error("Internal server error while getting awnings:", error);
         return c.json(
           { error: "Internal server error while getting awnings." },
-          400
+          400,
         );
       }
 
@@ -55,7 +55,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while getting awnings." },
-        500
+        500,
       );
     }
   }
@@ -77,7 +77,7 @@ class AwningsController {
         console.error("Internal server error:", error);
         return c.json(
           { error: "Internal server error while getting awning." },
-          400
+          400,
         );
       }
 
@@ -96,7 +96,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while getting awning." },
-        500
+        500,
       );
     }
   }
@@ -121,7 +121,7 @@ class AwningsController {
         console.error("Internal server error:", error);
         return c.json(
           { error: "Internal server error while inserting awning." },
-          400
+          400,
         );
       }
 
@@ -130,7 +130,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while inserting awning." },
-        400
+        400,
       );
     }
   }
@@ -155,7 +155,7 @@ class AwningsController {
         console.error("Internal server error:", error);
         return c.json(
           { error: "Internal server error while updating awning." },
-          400
+          400,
         );
       }
 
@@ -164,7 +164,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while updating awning." },
-        400
+        400,
       );
     }
   }
@@ -186,7 +186,7 @@ class AwningsController {
         console.error("Internal server error:", error);
         return c.json(
           { error: "Internal server error while deleting awning." },
-          400
+          400,
         );
       }
 
@@ -195,7 +195,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while deleting awning." },
-        400
+        400,
       );
     }
   }
@@ -216,11 +216,11 @@ class AwningsController {
       if (error) {
         console.error(
           "Internal server error while duplicating awning fields:",
-          error
+          error,
         );
         return c.json(
           { error: "Internal server error while duplicating awning fields." },
-          400
+          400,
         );
       }
 
@@ -237,14 +237,14 @@ class AwningsController {
         if (insertError) {
           console.error(
             "Internal server error while inserting duplicated awning fields:",
-            insertError
+            insertError,
           );
           return c.json(
             {
               error:
                 "Internal server error while inserting duplicated awning fields.",
             },
-            400
+            400,
           );
         }
 
@@ -255,11 +255,11 @@ class AwningsController {
     } catch (error) {
       console.error(
         "Internal server error while duplicating awning fields:",
-        error
+        error,
       );
       return c.json(
         { error: "Internal server error while duplicating awning fields." },
-        500
+        500,
       );
     }
   }
@@ -280,16 +280,16 @@ class AwningsController {
       if (error) {
         console.error(
           "Internal server error while getting awnings by field id:",
-          error
+          error,
         );
         return c.json(
           { error: "Internal server error while getting awnings by field id." },
-          400
+          400,
         );
       }
 
       const uniqueAwningsData = Array.from(
-        new Set(data.map((item: any) => item["AWNINGS"]["ID"]))
+        new Set(data.map((item: any) => item["AWNINGS"]["ID"])),
       )
         .map((id) => data.find((item: any) => item["AWNINGS"]["ID"] === id))
         .map((item: any) => ({
@@ -300,18 +300,18 @@ class AwningsController {
 
       const awnings: IAwning[] = Case.deepConvertKeys(
         uniqueAwningsData,
-        Case.toCamelCase
+        Case.toCamelCase,
       );
 
       return c.json(awnings, 200);
     } catch (error) {
       console.error(
         "Internal server error while getting awnings by field id:",
-        error
+        error,
       );
       return c.json(
         { error: "Internal server error while getting awnings by field id." },
-        500
+        500,
       );
     }
   }
@@ -367,8 +367,8 @@ class AwningsController {
         return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
       }
 
-      const { data: awningData, error: awningError } =
-        await config.database.rpc("get_closest_awning", {
+      const { data: awningData, error: awningError } = await config.database
+        .rpc("get_closest_awning", {
           _model: model,
           _tarp: lonTarp,
           _line: line,
@@ -386,19 +386,19 @@ class AwningsController {
 
       const awningPrice: IAwningPrice = Case.deepConvertKeys(
         awningData[0],
-        Case.toCamelCase
+        Case.toCamelCase,
       );
 
       if (awningPrice && awningPrice.rate === 1) {
         awningPrice.rate = 0;
       }
 
-      const { data: surchargeData, error: surchargeError } =
-        await config.database
-          .from("COLOR_SURCHAGES")
-          .select("SURCHAGE_PERCENTAGE")
-          .eq("MODEL_CODE", model)
-          .eq("COLOR_DESCRIPTION", ral);
+      const { data: surchargeData, error: surchargeError } = await config
+        .database
+        .from("COLOR_SURCHAGES")
+        .select("SURCHAGE_PERCENTAGE")
+        .eq("MODEL_CODE", model)
+        .eq("COLOR_DESCRIPTION", ral);
 
       if (surchargeError) {
         console.error("Error while getting surcharge data:", surchargeError);
@@ -414,8 +414,8 @@ class AwningsController {
         if (lonTarp === "A") {
           awningPrice.rate += awningPrice.rate * (surcharge / 100);
         } else {
-          const { data: awningDataA, error: awningErrorA } =
-            await config.database.rpc("get_awningPrice_awning", {
+          const { data: awningDataA, error: awningErrorA } = await config
+            .database.rpc("get_awningPrice_awning", {
               _model: model,
               _tarp: "A",
               _line: line,
@@ -450,11 +450,11 @@ class AwningsController {
         if (clientsFamilyDtoError) {
           console.error(
             "Error while getting clients family dto data:",
-            clientsFamilyDtoError
+            clientsFamilyDtoError,
           );
           return c.json(
             { error: "Error while getting clients family dto data" },
-            500
+            500,
           );
         }
 
@@ -521,7 +521,7 @@ class AwningsController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while getting awning price" },
-        500
+        500,
       );
     }
   }

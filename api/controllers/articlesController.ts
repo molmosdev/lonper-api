@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import config from "@config";
 import Case from "@utils/case.ts";
-import { User, IArticle } from "@lonper/types";
+import { IArticle, User } from "@lonper/types";
 
 class ArticlesController {
   /**

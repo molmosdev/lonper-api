@@ -13,6 +13,7 @@
     "@controllers/": "./api/controllers/",
     "@middlewares/": "./api/middlewares/",
     "@routers/": "./api/routers/",
-    "@utils/": "./api/utils/"
+    "@utils/": "./api/utils/",
+    "@openapi/": "./api/openapi/"
   }
 }

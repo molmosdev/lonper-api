@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { setCookie, deleteCookie } from "hono/cookie";
+import { deleteCookie, setCookie } from "hono/cookie";
 import config from "@config";
 import { AuthError } from "@supabase";
 
