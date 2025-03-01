@@ -241,25 +241,26 @@ class FieldsController {
         currentConfigIdSet.has(config.ID)
       );
 
-      for (const config of newConfigs) {
+      for (const newConfig of newConfigs) {
         const { error: insertError } = await config.database
           .from("FIELDS_SUBCONFIGS")
           .insert({
             FIELD_CONFIG_ID: id,
-            DATA_UNIT: config.DATA_UNIT,
-            DB_SELECT: config.DB_SELECT,
-            HOVER_TEXT: config.HOVER_TEXT,
-            ID: config.ID,
-            LINKED_ACTIVE: config.LINKED_ACTIVE,
-            LINKED_SAME_DEFAULT_UNTOUCHED: config.LINKED_SAME_DEFAULT_UNTOUCHED,
-            LINKED_SAME_ON_VALIDATE: config.LINKED_SAME_ON_VALIDATE,
-            POPUP: config.POPUP,
-            SELECT: config.SELECT,
-            SHOW_NAME: config.SHOW_NAME,
-            REQUIRED: config.REQUIRED,
-            SIZE: config.SIZE,
-            TYPE: config.TYPE,
-            VALUE: config.VALUE,
+            DATA_UNIT: newConfig.DATA_UNIT,
+            DB_SELECT: newConfig.DB_SELECT,
+            HOVER_TEXT: newConfig.HOVER_TEXT,
+            ID: newConfig.ID,
+            LINKED_ACTIVE: newConfig.LINKED_ACTIVE,
+            LINKED_SAME_DEFAULT_UNTOUCHED:
+              newConfig.LINKED_SAME_DEFAULT_UNTOUCHED,
+            LINKED_SAME_ON_VALIDATE: newConfig.LINKED_SAME_ON_VALIDATE,
+            POPUP: newConfig.POPUP,
+            SELECT: newConfig.SELECT,
+            SHOW_NAME: newConfig.SHOW_NAME,
+            REQUIRED: newConfig.REQUIRED,
+            SIZE: newConfig.SIZE,
+            TYPE: newConfig.TYPE,
+            VALUE: newConfig.VALUE,
           });
 
         if (insertError) {
@@ -276,25 +277,26 @@ class FieldsController {
         }
       }
 
-      for (const config of updatedConfigs) {
+      for (const updatedConfig of updatedConfigs) {
         const { error: updateError } = await config.database
           .from("FIELDS_SUBCONFIGS")
           .update({
-            DATA_UNIT: config.DATA_UNIT,
-            DB_SELECT: config.DB_SELECT,
-            HOVER_TEXT: config.HOVER_TEXT,
-            LINKED_ACTIVE: config.LINKED_ACTIVE,
-            LINKED_SAME_DEFAULT_UNTOUCHED: config.LINKED_SAME_DEFAULT_UNTOUCHED,
-            LINKED_SAME_ON_VALIDATE: config.LINKED_SAME_ON_VALIDATE,
-            POPUP: config.POPUP,
-            SELECT: config.SELECT,
-            SHOW_NAME: config.SHOW_NAME,
-            REQUIRED: config.REQUIRED,
-            SIZE: config.SIZE,
-            TYPE: config.TYPE,
-            VALUE: config.VALUE,
+            DATA_UNIT: updatedConfig.DATA_UNIT,
+            DB_SELECT: updatedConfig.DB_SELECT,
+            HOVER_TEXT: updatedConfig.HOVER_TEXT,
+            LINKED_ACTIVE: updatedConfig.LINKED_ACTIVE,
+            LINKED_SAME_DEFAULT_UNTOUCHED:
+              updatedConfig.LINKED_SAME_DEFAULT_UNTOUCHED,
+            LINKED_SAME_ON_VALIDATE: updatedConfig.LINKED_SAME_ON_VALIDATE,
+            POPUP: updatedConfig.POPUP,
+            SELECT: updatedConfig.SELECT,
+            SHOW_NAME: updatedConfig.SHOW_NAME,
+            REQUIRED: updatedConfig.REQUIRED,
+            SIZE: updatedConfig.SIZE,
+            TYPE: updatedConfig.TYPE,
+            VALUE: updatedConfig.VALUE,
           })
-          .eq("ID", config.ID);
+          .eq("ID", updatedConfig.ID);
 
         if (updateError) {
           console.error(

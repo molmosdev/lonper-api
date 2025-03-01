@@ -43,7 +43,7 @@ router.delete(
 );
 
 router.put(
-  "/putGroups",
+  "/putGroupsOrder",
   jwtValidator,
   putGroupsOrderDesc,
   GroupsController.putGroupsOrder,

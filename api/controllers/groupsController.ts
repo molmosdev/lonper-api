@@ -268,7 +268,7 @@ class GroupsController {
         throw updateError;
       }
 
-      return c.text("Groups updated successfully", 200);
+      return c.json({ message: "Groups updated successfully" }, 200);
     } catch (error) {
       console.error("Internal server error while updating the groups:", error);
       return c.json(
