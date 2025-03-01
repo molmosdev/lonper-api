@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import AddressesController from "@controllers/addressesController.ts";
-import jwtValidation from "@middlewares/jwtValidation.ts";
+import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
   deleteAddressDescription,
   getAddressesDescription,
@@ -12,28 +12,28 @@ const router = new Hono();
 
 router.get(
   "/getAddresses",
-  jwtValidation,
+  jwtValidator,
   getAddressesDescription,
   AddressesController.getAddresses,
 );
 
 router.post(
   "/postAddress",
-  jwtValidation,
+  jwtValidator,
   postAddressDescription,
   AddressesController.postAddress,
 );
 
 router.put(
   "/putAddress",
-  jwtValidation,
+  jwtValidator,
   putAddressDescription,
   AddressesController.putAddress,
 );
 
 router.delete(
   "/deleteAddress",
-  jwtValidation,
+  jwtValidator,
   deleteAddressDescription,
   AddressesController.deleteAddress,
 );

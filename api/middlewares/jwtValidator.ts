@@ -5,7 +5,7 @@ import { getCookie } from "hono/cookie";
 import config from "@config";
 
 // Middleware for verifying JWT tokens with Supabase Admin SDK
-const jwtValidation: MiddlewareHandler = async (c: Context, next: Next) => {
+const jwtValidator: MiddlewareHandler = async (c: Context, next: Next) => {
   try {
     const token = getCookie(c, "access_token");
 
@@ -38,4 +38,4 @@ const jwtValidation: MiddlewareHandler = async (c: Context, next: Next) => {
   }
 };
 
-export default jwtValidation;
+export default jwtValidator;

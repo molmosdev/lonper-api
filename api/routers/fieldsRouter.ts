@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import FieldsController from "@controllers/fieldsController.ts";
-import jwtValidation from "@middlewares/jwtValidation.ts";
+import jwtValidator from "@middlewares/jwtValidator.ts";
 import {
   createConfigDescription,
   deleteConfigDescription,
@@ -20,84 +20,84 @@ const router = new Hono();
 
 router.post(
   "/postField",
-  jwtValidation,
+  jwtValidator,
   postFieldDescription,
   FieldsController.postField,
 );
 
 router.put(
   "/putField",
-  jwtValidation,
+  jwtValidator,
   putFieldDescription,
   FieldsController.putField,
 );
 
 router.put(
   "/putFieldsOrder",
-  jwtValidation,
+  jwtValidator,
   putFieldsOrderDescription,
   FieldsController.putFieldsOrder,
 );
 
 router.delete(
   "/deleteField",
-  jwtValidation,
+  jwtValidator,
   deleteFieldDescription,
   FieldsController.deleteField,
 );
 
 router.put(
   "/putFieldConfigs",
-  jwtValidation,
+  jwtValidator,
   putFieldConfigsDescription,
   FieldsController.putFieldConfigs,
 );
 
 router.post(
   "/createConfig",
-  jwtValidation,
+  jwtValidator,
   createConfigDescription,
   FieldsController.createConfig,
 );
 
 router.delete(
   "/deleteConfig",
-  jwtValidation,
+  jwtValidator,
   deleteConfigDescription,
   FieldsController.deleteConfig,
 );
 
 router.get(
   "/getFieldsConfigsIdsActiveForAnAwning/:awningId",
-  jwtValidation,
+  jwtValidator,
   getFieldsConfigsIdsActiveForAnAwningDescription,
   FieldsController.getFieldsConfigsIdsActiveForAnAwning,
 );
 
 router.post(
   "/linkFieldConfigToAnAwning",
-  jwtValidation,
+  jwtValidator,
   linkFieldConfigToAnAwningDescription,
   FieldsController.linkFieldConfigToAnAwning,
 );
 
 router.post(
   "/unlinkFieldConfigToAnAwning",
-  jwtValidation,
+  jwtValidator,
   unlinkFieldConfigToAnAwningDescription,
   FieldsController.unlinkFieldConfigToAnAwning,
 );
 
 router.post(
   "/linkFieldConfigForAllAwnings",
-  jwtValidation,
+  jwtValidator,
   linkFieldConfigForAllAwningsDescription,
   FieldsController.linkFieldConfigForAllAwnings,
 );
 
 router.post(
   "/unlinkFieldConfigForAllAwnings",
-  jwtValidation,
+  jwtValidator,
   unlinkFieldConfigForAllAwningsDescription,
   FieldsController.unlinkFieldConfigForAllAwnings,
 );
