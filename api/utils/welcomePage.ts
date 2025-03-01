@@ -4,14 +4,14 @@ export function getWelcomePage() {
     <html>
       <head>
         <title>Welcome</title>
-        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
         <style>
           body {
-            font-family: 'Geist', sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100dvh;
             margin: 0;
             background-color: #f4f4f9;
           }
