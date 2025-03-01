@@ -29,7 +29,7 @@ class AddressesController {
         console.error("error", error);
         return c.json(
           { error: "Internal server error while publishing the address." },
-          400
+          400,
         );
       }
       console.log(`Address successfully updated for '${email}'.`);
@@ -38,7 +38,7 @@ class AddressesController {
       console.error("error", error);
       return c.json(
         { error: "Internal server error while publishing the address." },
-        500
+        500,
       );
     }
   }
@@ -52,7 +52,7 @@ class AddressesController {
     const user: User = c.get("user");
 
     try {
-      const { data: addresses, error } = await config.database
+      const { data, error } = await config.database
         .from("ADDRESSES")
         .select("*")
         .eq("CLIENT_EMAIL", user.email);
@@ -60,15 +60,18 @@ class AddressesController {
         console.error("error", error);
         return c.json(
           { error: "Internal server error while getting the addresses." },
-          400
+          400,
         );
       }
-      return c.json(Case.deepConvertKeys(addresses, Case.toCamelCase), 200);
+      const addresses: IRequestAddress[] =
+        Case.deepConvertKeys(data, Case.toCamelCase) || [];
+
+      return c.json(addresses, 200);
     } catch (error) {
       console.error("error", error);
       return c.json(
         { error: "Error interno del servidor al obtener las direcciones." },
-        500
+        500,
       );
     }
   }
@@ -91,7 +94,7 @@ class AddressesController {
         console.error("error", error);
         return c.json(
           { error: "Internal server error while updating the address." },
-          400
+          400,
         );
       }
       console.log(`Address successfully updated for '${id}' id.`);
@@ -100,7 +103,7 @@ class AddressesController {
       console.error("error", error);
       return c.json(
         { error: "Internal server error while updating the address." },
-        500
+        500,
       );
     }
   }
@@ -122,7 +125,7 @@ class AddressesController {
         console.error("error", error);
         return c.json(
           { error: "Internal server error while deleting the address." },
-          400
+          400,
         );
       }
       if (data === null) {
@@ -134,7 +137,7 @@ class AddressesController {
       console.error("error", error);
       return c.json(
         { error: "Internal server error while deleting the address." },
-        500
+        500,
       );
     }
   }

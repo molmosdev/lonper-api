@@ -26,7 +26,7 @@ app.use(
       return null;
     },
     credentials: true,
-  })
+  }),
 );
 
 // Swagger configuration
@@ -56,7 +56,7 @@ app.get(
         },
       ],
     },
-  })
+  }),
 );
 
 // Auth router

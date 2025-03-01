@@ -30,13 +30,13 @@ class ArticlesController {
         console.error("Error fetching articles:", error);
         return c.json(
           { error: "Internal server error while getting the articles by ids." },
-          500
+          500,
         );
       }
 
       const articles: IArticle[] = Case.deepConvertKeys(
         articlesFromDatabase,
-        Case.toCamelCase
+        Case.toCamelCase,
       );
 
       for (let i = 0; i < articles.length; i++) {
@@ -79,18 +79,18 @@ class ArticlesController {
             dto3 = commercialDiscount3;
 
             if (commercialDiscount1 !== 0) {
-              articles[i].salePrice -=
-                articles[i].salePrice * (commercialDiscount1 / 100);
+              articles[i].salePrice -= articles[i].salePrice *
+                (commercialDiscount1 / 100);
             }
 
             if (commercialDiscount2 !== 0) {
-              articles[i].salePrice -=
-                articles[i].salePrice * (commercialDiscount2 / 100);
+              articles[i].salePrice -= articles[i].salePrice *
+                (commercialDiscount2 / 100);
             }
 
             if (commercialDiscount3 !== 0) {
-              articles[i].salePrice -=
-                articles[i].salePrice * (commercialDiscount3 / 100);
+              articles[i].salePrice -= articles[i].salePrice *
+                (commercialDiscount3 / 100);
             }
           }
         } else {
@@ -99,18 +99,18 @@ class ArticlesController {
           dto3 = commercialDiscount3;
 
           if (commercialDiscount1 !== 0) {
-            articles[i].salePrice -=
-              articles[i].salePrice * (commercialDiscount1 / 100);
+            articles[i].salePrice -= articles[i].salePrice *
+              (commercialDiscount1 / 100);
           }
 
           if (commercialDiscount2 !== 0) {
-            articles[i].salePrice -=
-              articles[i].salePrice * (commercialDiscount2 / 100);
+            articles[i].salePrice -= articles[i].salePrice *
+              (commercialDiscount2 / 100);
           }
 
           if (commercialDiscount3 !== 0) {
-            articles[i].salePrice -=
-              articles[i].salePrice * (commercialDiscount3 / 100);
+            articles[i].salePrice -= articles[i].salePrice *
+              (commercialDiscount3 / 100);
           }
         }
 
@@ -125,7 +125,7 @@ class ArticlesController {
       console.error("Internal server error:", error);
       return c.json(
         { error: "Internal server error while getting the articles by ids." },
-        500
+        500,
       );
     }
   }
