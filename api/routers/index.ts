@@ -6,6 +6,7 @@ import awningsRouter from "@routers/awningsRouter.ts";
 import dbSelectRouter from "@routers/dbSelectRouter.ts";
 import fieldsRouter from "@routers/fieldsRouter.ts";
 import groupsRouter from "@routers/groupsRouter.ts";
+import requestsRouter from "@routers/requestsRouter.ts";
 
 const rootRouter = new Hono();
 
@@ -22,5 +23,7 @@ rootRouter.route("/dbSelect", dbSelectRouter);
 rootRouter.route("/fields", fieldsRouter);
 
 rootRouter.route("/groups", groupsRouter);
+
+rootRouter.route("/requests", requestsRouter);
 
 export default rootRouter;
