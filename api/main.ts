@@ -8,6 +8,7 @@ import addressesRouter from "@routers/addressesRouter.ts";
 import authRouter from "@routers/authRouter.ts";
 import articlesRouter from "@routers/articlesRouter.ts";
 import awningsRouter from "@routers/awningsRouter.ts";
+import dbSelectRouter from "@routers/dbSelectRouter.ts";
 
 const app = new Hono();
 
@@ -70,5 +71,8 @@ app.route("/api/v2/articles", articlesRouter);
 
 // Awnings router
 app.route("/api/v2/awnings", awningsRouter);
+
+// DbSelect router
+app.route("/api/v2/dbSelect", dbSelectRouter);
 
 Deno.serve(app.fetch);
