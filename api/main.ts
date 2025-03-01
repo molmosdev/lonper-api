@@ -9,6 +9,7 @@ import authRouter from "@routers/authRouter.ts";
 import articlesRouter from "@routers/articlesRouter.ts";
 import awningsRouter from "@routers/awningsRouter.ts";
 import dbSelectRouter from "@routers/dbSelectRouter.ts";
+import fieldsRouter from "@routers/fieldsRouter.ts";
 
 const app = new Hono();
 
@@ -74,5 +75,8 @@ app.route("/api/v2/awnings", awningsRouter);
 
 // DbSelect router
 app.route("/api/v2/dbSelect", dbSelectRouter);
+
+// Fields router
+app.route("/api/v2/fields", fieldsRouter);
 
 Deno.serve(app.fetch);
