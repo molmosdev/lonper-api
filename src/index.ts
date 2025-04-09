@@ -24,7 +24,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 // Versioning
 app.basePath("/v3");
 
-// CORS configuration
+// CORS middleware
 app.use("*", corsMiddleware);
 
 // Supabase middleware
