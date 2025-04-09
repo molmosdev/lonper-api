@@ -13,7 +13,7 @@ export const swaggerConfig = (app: any) => {
     return auth(c, next);
   };
 
-  app.get("/swagger", swaggerUI({ url: "/openapi" }));
+  app.get("/swagger", swaggerUI({ url: "/v3/openapi" }));
 
   app.get(
     "/openapi",
