@@ -6,12 +6,13 @@ import {
 } from "../schemas";
 
 export const getAddressesDesc = describeRoute({
-  summary: "Get addresses",
-  description: "This endpoint retrieves the addresses of the current user.",
+  summary: "Retrieve User Addresses",
+  description:
+    "Fetches all addresses associated with the currently authenticated user.",
   tags: ["Addresses"],
   responses: {
     200: {
-      description: "Addresses retrieved successfully",
+      description: "Addresses retrieved successfully.",
       content: {
         "application/json": {
           schema: {
@@ -22,7 +23,7 @@ export const getAddressesDesc = describeRoute({
       },
     },
     500: {
-      description: "Internal server error",
+      description: "An error occurred while retrieving the addresses.",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -33,8 +34,9 @@ export const getAddressesDesc = describeRoute({
 });
 
 export const postAddressDesc = describeRoute({
-  summary: "Add a new address",
-  description: "This endpoint allows adding a new address.",
+  summary: "Create a New Address",
+  description:
+    "Allows the authenticated user to add a new address to their account.",
   tags: ["Addresses"],
   requestBody: {
     required: true,
@@ -46,7 +48,7 @@ export const postAddressDesc = describeRoute({
   },
   responses: {
     200: {
-      description: "Address added successfully",
+      description: "Address added successfully.",
       content: {
         "application/json": {
           schema: successMessageSchema,
@@ -54,7 +56,7 @@ export const postAddressDesc = describeRoute({
       },
     },
     500: {
-      description: "Internal server error",
+      description: "An error occurred while adding the address.",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -65,8 +67,9 @@ export const postAddressDesc = describeRoute({
 });
 
 export const putAddressDesc = describeRoute({
-  summary: "Update an address",
-  description: "This endpoint allows updating an existing address.",
+  summary: "Update an Existing Address",
+  description:
+    "Allows the authenticated user to update the details of an existing address.",
   tags: ["Addresses"],
   requestBody: {
     required: true,
@@ -78,7 +81,7 @@ export const putAddressDesc = describeRoute({
   },
   responses: {
     200: {
-      description: "Address updated successfully",
+      description: "Address updated successfully.",
       content: {
         "application/json": {
           schema: successMessageSchema,
@@ -86,7 +89,7 @@ export const putAddressDesc = describeRoute({
       },
     },
     500: {
-      description: "Internal server error",
+      description: "An error occurred while updating the address.",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -97,8 +100,8 @@ export const putAddressDesc = describeRoute({
 });
 
 export const deleteAddressDesc = describeRoute({
-  summary: "Delete an address",
-  description: "This endpoint allows deleting an existing address.",
+  summary: "Delete an Address",
+  description: "Allows the authenticated user to delete an address by its ID.",
   tags: ["Addresses"],
   requestBody: {
     required: true,
@@ -107,7 +110,10 @@ export const deleteAddressDesc = describeRoute({
         schema: {
           type: "object",
           properties: {
-            addressId: { type: "string", description: "Address ID" },
+            addressId: {
+              type: "string",
+              description: "The unique ID of the address to delete.",
+            },
           },
           required: ["addressId"],
         },
@@ -116,7 +122,7 @@ export const deleteAddressDesc = describeRoute({
   },
   responses: {
     200: {
-      description: "Address deleted successfully",
+      description: "Address deleted successfully.",
       content: {
         "application/json": {
           schema: successMessageSchema,
@@ -124,7 +130,7 @@ export const deleteAddressDesc = describeRoute({
       },
     },
     404: {
-      description: "Address not found",
+      description: "The specified address was not found.",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -132,7 +138,7 @@ export const deleteAddressDesc = describeRoute({
       },
     },
     500: {
-      description: "Internal server error",
+      description: "An error occurred while deleting the address.",
       content: {
         "application/json": {
           schema: errorResponseSchema,
