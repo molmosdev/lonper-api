@@ -47,7 +47,7 @@ app.post("/logout", logoutDesc, userMiddleware, async (c: Context) => {
 });
 
 app.post(
-  "/sendPasswordResetEmail",
+  "/send-password-reset-email",
   sendPasswordResetEmailDesc,
   userMiddleware,
   async (c: Context) => {
@@ -76,7 +76,7 @@ app.post(
   }
 );
 
-app.get("/getCurrentUser", getCurrentUserDesc, userMiddleware, (c: Context) => {
+app.get("/user", getCurrentUserDesc, userMiddleware, (c: Context) => {
   return c.json(c.get("user"), 200);
 });
 
