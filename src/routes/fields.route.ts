@@ -464,7 +464,7 @@ app.put(
     const fieldConfigId = c.req.param("id");
 
     try {
-      const { data: AWNINGS, error: awningsError } = await supabase
+      const { data: awnings, error: awningsError } = await supabase
         .from("AWNINGS")
         .select("ID");
 
@@ -473,38 +473,35 @@ app.put(
         return c.json({ error: "Error getting awnings." }, 400);
       }
 
-      const insertPromises = AWNINGS.map(async (AWNING) => {
-        const { data: existingField, error: existingFieldError } =
-          await supabase
-            .from("AWNINGS_FIELDS_CONFIGS")
-            .select("ID")
-            .match({ FIELD_CONFIG_ID: fieldConfigId, AWNING_ID: AWNING["ID"] });
+      const { data: existingLinks, error: existingError } = await supabase
+        .from("AWNINGS_FIELDS_CONFIGS")
+        .select("AWNING_ID")
+        .eq("FIELD_CONFIG_ID", fieldConfigId);
 
-        if (existingFieldError) {
-          console.error(
-            `Error checking existing field for awning ${AWNING["ID"]}:`,
-            existingFieldError
-          );
-          return;
-        }
+      if (existingError) {
+        console.error("Error getting existing links:", existingError);
+        return c.json({ error: "Error getting existing links." }, 400);
+      }
 
-        if (existingField.length > 0) {
-          return;
-        }
+      const existingAwningsIds = existingLinks.map((link) => link.AWNING_ID);
 
+      const newEntries = awnings
+        .filter((awning) => !existingAwningsIds.includes(awning.ID))
+        .map((awning) => ({
+          FIELD_CONFIG_ID: fieldConfigId,
+          AWNING_ID: awning.ID,
+        }));
+
+      if (newEntries.length > 0) {
         const { error } = await supabase
           .from("AWNINGS_FIELDS_CONFIGS")
-          .insert({ FIELD_CONFIG_ID: fieldConfigId, AWNING_ID: AWNING["ID"] });
+          .insert(newEntries);
 
         if (error) {
-          console.error(
-            `Error linking field to awning ${AWNING["ID"]}:`,
-            error
-          );
+          console.error("Error inserting new links:", error);
+          return c.json({ error: "Error linking field to awnings." }, 400);
         }
-      });
-
-      await Promise.all(insertPromises);
+      }
 
       console.log("Field config linked to all awnings successfully");
       return c.json(
