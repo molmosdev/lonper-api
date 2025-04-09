@@ -19,7 +19,7 @@ type Bindings = {
   CLIENT_STATIC_URL: string;
 };
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<{ Bindings: Bindings }>().basePath("/v3");
 
 // CORS configuration
 app.use("*", corsMiddleware);
@@ -28,14 +28,14 @@ app.use("*", corsMiddleware);
 app.use("*", supabaseMiddleware);
 
 // Routes
-app.route("/api/auth", auth);
-app.route("/api/addresses", addresses);
-app.route("/api/articles", articles);
-app.route("/api/awnings", awnings);
-app.route("/api/db-select", dbSelect);
-app.route("/api/fields", fields);
-app.route("/api/groups", groups);
-app.route("/api/requests", requests);
+app.route("/auth", auth);
+app.route("/addresses", addresses);
+app.route("/articles", articles);
+app.route("/awnings", awnings);
+app.route("/db-select", dbSelect);
+app.route("/fields", fields);
+app.route("/groups", groups);
+app.route("/requests", requests);
 
 // Swagger UI configuration
 swaggerConfig(app);
