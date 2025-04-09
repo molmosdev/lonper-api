@@ -32,9 +32,8 @@ export const supabaseMiddleware: MiddlewareHandler = async (c, next) => {
               ...options,
               httpOnly: true,
               secure: isLocal ? false : true,
-              sameSite: "none",
+              sameSite: "Lax",
               path: "/",
-              domain: isLocal ? undefined : domain,
             })
           );
         },
