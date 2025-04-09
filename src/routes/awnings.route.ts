@@ -8,8 +8,9 @@ import {
   deleteAwningDesc,
   duplicateAwningFieldsDesc,
   getAwningPriceDesc,
+  getGroupsForAnAwningDesc,
 } from "../openapi/descriptions/awningsDescriptions";
-import { IAwning, IAwningPrice } from "@lonper/types";
+import { IAwning, IAwningPrice, IField, IGroup } from "@lonper/types";
 import Case from "../utils/case";
 
 const app = new Hono();
@@ -469,6 +470,80 @@ app.post(
       );
       return c.json(
         { error: "Internal server error while duplicating awning fields." },
+        500
+      );
+    }
+  }
+);
+
+app.get(
+  "/:id/groups",
+  userMiddleware,
+  getGroupsForAnAwningDesc,
+  async (c: Context) => {
+    const supabase = c.get("supabase");
+    const awningId = c.req.param("id");
+
+    try {
+      const { data: fieldConfigIdsData, error: fieldConfigIdsError } =
+        await supabase
+          .from("AWNINGS_FIELDS_CONFIGS")
+          .select("FIELD_CONFIG_ID")
+          .eq("AWNING_ID", awningId);
+
+      if (fieldConfigIdsError) {
+        console.error(
+          "Error getting active fields for awning:",
+          fieldConfigIdsError
+        );
+        return c.json(
+          { error: "Error getting active fields for awning." },
+          400
+        );
+      }
+
+      const fieldConfigIds = fieldConfigIdsData.map(
+        (item) => item.FIELD_CONFIG_ID
+      );
+
+      const { data, error } = await supabase
+        .from("GROUPS")
+        .select(`*, FIELDS(*, FIELDS_CONFIGS(*, FIELDS_SUBCONFIGS(*)))`)
+        .order("ORDER");
+
+      if (error) {
+        console.error("Error getting groups:", error);
+        return c.json({ error: "Error getting groups." }, 400);
+      }
+
+      const groups: IGroup[] = Case.deepConvertKeys(data, Case.toCamelCase);
+
+      const filteredGroups: IGroup[] = groups.map((group) => {
+        const filteredFields = group.fields
+          .map((field: IField) => {
+            const filteredConfigs = field.fieldsConfigs.filter((config) =>
+              fieldConfigIds.includes(config.id)
+            );
+            return filteredConfigs.length > 0
+              ? { ...field, fieldsConfigs: filteredConfigs }
+              : null;
+          })
+          .filter((field) => field !== null);
+
+        return { ...group, fields: filteredFields };
+      });
+
+      filteredGroups.forEach((group) => {
+        if (group.fields) {
+          group.fields.sort((a, b) => a.order - b.order);
+        }
+      });
+
+      return c.json(filteredGroups, 200);
+    } catch (error) {
+      console.error("Internal server error while getting groups:", error);
+      return c.json(
+        { error: "Internal server error while getting groups." },
         500
       );
     }

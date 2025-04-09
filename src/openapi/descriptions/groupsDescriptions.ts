@@ -77,14 +77,24 @@ export const putGroupDesc = describeRoute({
         schema: {
           type: "object",
           properties: {
-            id: { type: "string", description: "Group ID" },
             name: { type: "string", description: "Group name" },
           },
-          required: ["id", "name"],
+          required: ["name"],
         },
       },
     },
   },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "Group ID",
+      schema: {
+        type: "string",
+      },
+    },
+  ],
   responses: {
     200: {
       description: "Group updated successfully",
@@ -107,22 +117,19 @@ export const putGroupDesc = describeRoute({
 
 export const deleteGroupDesc = describeRoute({
   summary: "Delete a group",
-  description: "This endpoint deletes a group.",
+  description: "This endpoint deletes a group by its ID.",
   tags: ["Groups"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Group ID" },
-          },
-          required: ["id"],
-        },
+  parameters: [
+    {
+      name: "id",
+      in: "path", // Indicates that the ID is passed as a URL parameter
+      required: true,
+      description: "The ID of the group to delete",
+      schema: {
+        type: "string",
       },
     },
-  },
+  ],
   responses: {
     200: {
       description: "Group deleted successfully",
@@ -132,6 +139,19 @@ export const deleteGroupDesc = describeRoute({
             type: "object",
             properties: {
               message: { type: "string", description: "Success message" },
+            },
+          },
+        },
+      },
+    },
+    400: {
+      description: "Bad request",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
             },
           },
         },
