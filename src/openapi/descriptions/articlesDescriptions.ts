@@ -5,24 +5,18 @@ export const getArticlesByIdsDesc = describeRoute({
   summary: "Get articles by IDs",
   description: "This endpoint retrieves articles by their IDs.",
   tags: ["Articles"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            articleIds: {
-              type: "array",
-              items: { type: "string" },
-              description: "Array of article IDs",
-            },
-          },
-          required: ["articleIds"],
-        },
+  parameters: [
+    {
+      name: "ids",
+      in: "query",
+      required: true,
+      description: "Comma-separated list of article IDs",
+      schema: {
+        type: "string",
+        example: "1,2,3",
       },
     },
-  },
+  ],
   responses: {
     200: {
       description: "Articles retrieved successfully",
@@ -32,6 +26,14 @@ export const getArticlesByIdsDesc = describeRoute({
             type: "array",
             items: articleSchema,
           },
+        },
+      },
+    },
+    400: {
+      description: "Bad request - Missing or invalid article IDs",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
         },
       },
     },
