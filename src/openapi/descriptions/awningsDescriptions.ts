@@ -159,15 +159,18 @@ export const putAwningDesc = describeRoute({
 
 export const deleteAwningDesc = describeRoute({
   summary: "Delete an awning",
-  description: "This endpoint deletes an awning.",
+  description: "This endpoint deletes an awning by its ID.",
   tags: ["Awnings"],
   parameters: [
     {
       name: "id",
       in: "path",
       required: true,
-      schema: { type: "string" },
-      description: "Awning ID",
+      description: "The ID of the awning to delete",
+      schema: {
+        type: "string",
+        example: "12345",
+      },
     },
   ],
   responses: {
@@ -178,9 +181,24 @@ export const deleteAwningDesc = describeRoute({
           schema: {
             type: "object",
             properties: {
-              message: { type: "string", description: "Success message" },
+              message: {
+                type: "string",
+                example: "Awning deleted successfully.",
+              },
             },
-            required: ["message"],
+          },
+        },
+      },
+    },
+    404: {
+      description: "Awning not found",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", example: "Awning not found." },
+            },
           },
         },
       },
@@ -189,7 +207,12 @@ export const deleteAwningDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", example: "Internal server error." },
+            },
+          },
         },
       },
     },
@@ -198,8 +221,17 @@ export const deleteAwningDesc = describeRoute({
 
 export const duplicateAwningFieldsDesc = describeRoute({
   summary: "Duplicate awning fields",
-  description: "This endpoint duplicates awning fields.",
+  description: "This endpoint duplicates the fields of an awning.",
   tags: ["Awnings"],
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      description: "ID of the awning to duplicate",
+      schema: { type: "string" },
+    },
+  ],
   requestBody: {
     required: true,
     content: {
@@ -207,16 +239,12 @@ export const duplicateAwningFieldsDesc = describeRoute({
         schema: {
           type: "object",
           properties: {
-            duplicateId: {
-              type: "string",
-              description: "ID of the awning to duplicate",
-            },
-            newAwningId: {
+            newId: {
               type: "string",
               description: "ID of the new awning",
             },
           },
-          required: ["duplicateId", "newAwningId"],
+          required: ["newId"],
         },
       },
     },
@@ -229,45 +257,27 @@ export const duplicateAwningFieldsDesc = describeRoute({
           schema: {
             type: "object",
             properties: {
-              message: { type: "string", description: "Success message" },
+              message: {
+                type: "string",
+                example: "Fields duplicated successfully.",
+              },
             },
-            required: ["message"],
           },
         },
       },
     },
-    500: {
-      description: "Internal server error",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-  },
-});
-
-export const getAwningsByFieldIdDesc = describeRoute({
-  summary: "Get awnings by field ID",
-  description: "This endpoint retrieves awnings by field ID.",
-  tags: ["Awnings"],
-  parameters: [
-    {
-      name: "fieldId",
-      in: "path",
-      required: true,
-      schema: { type: "string" },
-      description: "Field ID",
-    },
-  ],
-  responses: {
-    200: {
-      description: "Awnings retrieved successfully",
+    404: {
+      description: "No fields found for the specified awning ID",
       content: {
         "application/json": {
           schema: {
-            type: "array",
-            items: awningSchema,
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "No fields found for the specified awning ID.",
+              },
+            },
           },
         },
       },
@@ -276,7 +286,12 @@ export const getAwningsByFieldIdDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", example: "Internal server error." },
+            },
+          },
         },
       },
     },
@@ -284,86 +299,127 @@ export const getAwningsByFieldIdDesc = describeRoute({
 });
 
 export const getAwningPriceDesc = describeRoute({
-  summary: "Get awning price",
-  description: "This endpoint retrieves the price of an awning.",
+  summary: "Retrieve the price of an awning",
+  description:
+    "This endpoint calculates and retrieves the price of an awning based on the provided parameters.",
   tags: ["Awnings"],
   parameters: [
     {
       name: "model",
-      in: "path",
+      in: "query",
       required: true,
       schema: { type: "string" },
-      description: "Model",
+      description: "The model of the awning.",
     },
     {
       name: "line",
-      in: "path",
+      in: "query",
       required: true,
-      schema: { type: "string" },
-      description: "Line",
+      schema: { type: "integer" },
+      description: "The line of the awning.",
     },
     {
       name: "exit",
-      in: "path",
+      in: "query",
       required: true,
-      schema: { type: "string" },
-      description: "Exit",
+      schema: { type: "integer" },
+      description: "The exit of the awning.",
     },
     {
       name: "tarp",
-      in: "path",
+      in: "query",
       required: true,
       schema: { type: "string" },
-      description: "Tarp",
+      description: "The tarp of the awning.",
     },
     {
       name: "ral",
-      in: "path",
+      in: "query",
       required: true,
       schema: { type: "string" },
-      description: "RAL",
+      description: "The RAL color of the awning.",
     },
     {
       name: "familyCode",
-      in: "path",
+      in: "query",
       required: true,
       schema: { type: "string" },
-      description: "Family code",
+      description: "The family code of the awning.",
     },
   ],
   responses: {
     200: {
-      description: "Awning price retrieved successfully",
+      description: "Awning price retrieved successfully.",
       content: {
         "application/json": {
           schema: {
             type: "object",
             properties: {
-              id: { type: "string", description: "Awning ID" },
-              awning: { type: "string", description: "Awning" },
-              model: { type: "string", description: "Model" },
-              tarp: { type: "string", description: "Tarp" },
-              line: { type: "number", description: "Line" },
-              exit: { type: "number", description: "Exit" },
-              rate: { type: "number", description: "Rate" },
+              id: { type: "string", description: "The ID of the awning." },
+              awning: { type: "string", description: "The awning name." },
+              model: {
+                type: "string",
+                description: "The model of the awning.",
+              },
+              tarp: { type: "string", description: "The tarp of the awning." },
+              line: { type: "integer", description: "The line of the awning." },
+              exit: { type: "integer", description: "The exit of the awning." },
+              rate: {
+                type: "number",
+                description: "The final price of the awning.",
+              },
               rateBeforeDiscount: {
                 type: "number",
-                description: "Rate before discount",
+                description:
+                  "The price of the awning before applying discounts.",
               },
-              dto1: { type: "number", description: "Discount 1" },
-              dto2: { type: "number", description: "Discount 2" },
-              dto3: { type: "number", description: "Discount 3" },
+              dto1: {
+                type: "number",
+                description: "The first discount applied.",
+              },
+              dto2: {
+                type: "number",
+                description: "The second discount applied.",
+              },
+              dto3: {
+                type: "number",
+                description: "The third discount applied.",
+              },
             },
             required: ["id", "awning", "model", "tarp", "line", "exit", "rate"],
           },
         },
       },
     },
-    500: {
-      description: "Internal server error",
+    400: {
+      description: "Invalid parameters provided.",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "Invalid line or exit parameter.",
+              },
+            },
+          },
+        },
+      },
+    },
+    500: {
+      description: "Internal server error.",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "Internal server error while getting awning price.",
+              },
+            },
+          },
         },
       },
     },
