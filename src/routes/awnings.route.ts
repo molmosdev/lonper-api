@@ -9,6 +9,7 @@ import {
   duplicateAwningFieldsDesc,
   getAwningPriceDesc,
   getGroupsForAnAwningDesc,
+  getFieldsConfigsIdsActiveForAnAwningDesc,
 } from "../openapi/descriptions/awningsDescriptions";
 import { IAwning, IAwningPrice, IField, IGroup } from "@lonper/types";
 import Case from "../utils/case";
@@ -544,6 +545,48 @@ app.get(
       console.error("Internal server error while getting groups:", error);
       return c.json(
         { error: "Internal server error while getting groups." },
+        500
+      );
+    }
+  }
+);
+
+app.get(
+  "/:id/active-fields-configs-ids",
+  userMiddleware,
+  getFieldsConfigsIdsActiveForAnAwningDesc,
+  async (c: Context) => {
+    const supabase = c.get("supabase");
+    const awningId = c.req.param("id");
+
+    try {
+      const { data, error } = await supabase
+        .from("AWNINGS_FIELDS_CONFIGS")
+        .select("FIELD_CONFIG_ID")
+        .eq("AWNING_ID", awningId);
+
+      const formattedData = Case.deepConvertKeys(
+        (data ?? []).map((item) => item["FIELD_CONFIG_ID"]),
+        Case.toCamelCase
+      );
+
+      if (error) {
+        console.error("Error while getting active fields for awning:", error);
+        return c.json(
+          { error: "Error while getting active fields for awning." },
+          400
+        );
+      }
+
+      console.log("Active fields retrieved successfully");
+      return c.json(formattedData, 200);
+    } catch (error) {
+      console.error(
+        "Internal server error while getting active fields:",
+        error
+      );
+      return c.json(
+        { error: "Internal server error while getting active fields." },
         500
       );
     }

@@ -461,3 +461,48 @@ export const getGroupsForAnAwningDesc = describeRoute({
     },
   },
 });
+
+export const getFieldsConfigsIdsActiveForAnAwningDesc = describeRoute({
+  summary: "Retrieve active field configuration IDs for an awning",
+  description:
+    "This endpoint retrieves a list of active field configuration IDs associated with a specific awning. It ensures that only active configurations are returned.",
+  tags: ["Awnings"],
+  parameters: [
+    {
+      name: "awningId",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The unique identifier of the awning.",
+    },
+  ],
+  responses: {
+    200: {
+      description: "Active field configuration IDs retrieved successfully.",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: { type: "string" },
+          },
+        },
+      },
+    },
+    400: {
+      description: "Invalid request parameters.",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: "Internal server error occurred.",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+});
