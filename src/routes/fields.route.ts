@@ -8,18 +8,18 @@ import {
   putFieldConfigsDesc,
   createConfigDesc,
   deleteConfigDesc,
-  getFieldsConfigsIdsActiveForAnAwningDesc,
   linkFieldConfigToAnAwningDesc,
-  unlinkFieldConfigToAnAwningDesc,
-  linkFieldConfigForAllAwningsDesc,
-  unlinkFieldConfigForAllAwningsDesc,
+  unlinkFieldConfigFromAnAwningDesc,
+  linkFieldConfigToAllAwningsDesc,
+  unlinkFieldConfigFromAllAwningsDesc,
+  getAwningsByFieldIdDesc,
 } from "../openapi/descriptions/fieldsDescriptions";
-import { IField } from "@lonper/types";
+import { IAwning, IField } from "@lonper/types";
 import Case from "../utils/case";
 
 const app = new Hono();
 
-app.post("/postField", userMiddleware, postFieldDesc, async (c: Context) => {
+app.post("/", userMiddleware, postFieldDesc, async (c: Context) => {
   const supabase = c.get("supabase");
 
   try {
@@ -62,11 +62,12 @@ app.post("/postField", userMiddleware, postFieldDesc, async (c: Context) => {
   }
 });
 
-app.put("/putField", userMiddleware, putFieldDesc, async (c: Context) => {
+app.put("/:id", userMiddleware, putFieldDesc, async (c: Context) => {
   const supabase = c.get("supabase");
+  const id = c.req.param("id");
 
   try {
-    const { id, name, description, saveOnRequest } = await c.req.json();
+    const { name, description, saveOnRequest } = await c.req.json();
 
     const { data, error } = await supabase
       .from("FIELDS")
@@ -93,273 +94,262 @@ app.put("/putField", userMiddleware, putFieldDesc, async (c: Context) => {
   }
 });
 
-app.put(
-  "/putFieldsOrder",
-  userMiddleware,
-  putFieldsOrderDesc,
-  async (c: Context) => {
-    const supabase = c.get("supabase");
+app.put("/order", userMiddleware, putFieldsOrderDesc, async (c: Context) => {
+  const supabase = c.get("supabase");
 
-    try {
-      const { previousIndex, currentIndex, groupId } = await c.req.json();
+  try {
+    const { previousIndex, currentIndex, groupId } = await c.req.json();
 
-      const { data: groupFields, error: fetchError } = await supabase
-        .from("FIELDS")
-        .select("*")
-        .eq("GROUP_ID", groupId)
-        .order("ORDER", { ascending: true });
+    const { data: groupFields, error: fetchError } = await supabase
+      .from("FIELDS")
+      .select("*")
+      .eq("GROUP_ID", groupId)
+      .order("ORDER", { ascending: true });
 
-      if (fetchError) {
-        throw fetchError;
-      }
-
-      const formattedGroupFields = Case.deepConvertKeys(
-        groupFields,
-        Case.toCamelCase
-      );
-
-      if (
-        previousIndex < 0 ||
-        previousIndex >= formattedGroupFields.length ||
-        currentIndex < 0 ||
-        currentIndex >= formattedGroupFields.length
-      ) {
-        return c.json({ error: "Indices out of range." }, 400);
-      }
-
-      const [movingField] = formattedGroupFields.splice(previousIndex, 1);
-      formattedGroupFields.splice(currentIndex, 0, movingField);
-
-      const updatedGroupFields = formattedGroupFields.map(
-        (groupField: IField, index: number) => ({
-          ...groupField,
-          order: index,
-        })
-      );
-
-      const { error: updateError } = await supabase
-        .from("FIELDS")
-        .upsert(
-          Case.deepConvertKeys(updatedGroupFields, Case.toUpperSnakeCase),
-          { onConflict: "ID" }
-        );
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      console.log("Fields order updated successfully");
-      return c.json({ message: "Fields order updated successfully" }, 200);
-    } catch (error) {
-      console.error(
-        "Internal server error while updating fields order:",
-        error
-      );
-      return c.json(
-        { error: "Internal server error while updating fields order." },
-        500
-      );
+    if (fetchError) {
+      throw fetchError;
     }
-  }
-);
 
-app.delete(
-  "/deleteField",
-  userMiddleware,
-  deleteFieldDesc,
-  async (c: Context) => {
-    const supabase = c.get("supabase");
+    const formattedGroupFields = Case.deepConvertKeys(
+      groupFields,
+      Case.toCamelCase
+    );
 
-    try {
-      const { id } = await c.req.json();
-
-      const { error } = await supabase.from("FIELDS").delete().eq("ID", id);
-
-      if (error) {
-        console.error("Error while deleting field:", error);
-        return c.json({ error: "Error while deleting field." }, 400);
-      }
-
-      console.log("Field deleted successfully");
-      return c.json({ message: "Field deleted successfully" }, 200);
-    } catch (error) {
-      console.error("Internal server error while deleting field:", error);
-      return c.json(
-        { error: "Internal server error while deleting field." },
-        500
-      );
+    if (
+      previousIndex < 0 ||
+      previousIndex >= formattedGroupFields.length ||
+      currentIndex < 0 ||
+      currentIndex >= formattedGroupFields.length
+    ) {
+      return c.json({ error: "Indices out of range." }, 400);
     }
+
+    const [movingField] = formattedGroupFields.splice(previousIndex, 1);
+    formattedGroupFields.splice(currentIndex, 0, movingField);
+
+    const updatedGroupFields = formattedGroupFields.map(
+      (groupField: IField, index: number) => ({
+        ...groupField,
+        order: index,
+      })
+    );
+
+    const { error: updateError } = await supabase
+      .from("FIELDS")
+      .upsert(Case.deepConvertKeys(updatedGroupFields, Case.toUpperSnakeCase), {
+        onConflict: "ID",
+      });
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    console.log("Fields order updated successfully");
+    return c.json({ message: "Fields order updated successfully" }, 200);
+  } catch (error) {
+    console.error("Internal server error while updating fields order:", error);
+    return c.json(
+      { error: "Internal server error while updating fields order." },
+      500
+    );
   }
-);
+});
+
+app.delete("/:id", userMiddleware, deleteFieldDesc, async (c: Context) => {
+  const supabase = c.get("supabase");
+  const id = c.req.param("id");
+
+  try {
+    const { error } = await supabase.from("FIELDS").delete().eq("ID", id);
+
+    if (error) {
+      console.error("Error while deleting field:", error);
+      return c.json({ error: "Error while deleting field." }, 400);
+    }
+
+    console.log("Field deleted successfully");
+    return c.json({ message: "Field deleted successfully" }, 200);
+  } catch (error) {
+    console.error("Internal server error while deleting field:", error);
+    return c.json(
+      { error: "Internal server error while deleting field." },
+      500
+    );
+  }
+});
 
 app.put(
-  "/putFieldConfigs",
+  "/subconfigs/:id",
   userMiddleware,
   putFieldConfigsDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const fieldConfigId = c.req.param("id");
 
     try {
-      const { id, configs } = await c.req.json();
+      const subconfigs = await c.req.json();
 
-      const formattedConfigs = Case.deepConvertKeys(
-        configs,
+      const formattedSubconfigs = Case.deepConvertKeys(
+        subconfigs,
         Case.toUpperSnakeCase
       );
 
-      const { data: currentConfigIds, error: fetchError } = await supabase
+      const { data: currentSubconfigIds, error: fetchError } = await supabase
         .from("FIELDS_SUBCONFIGS")
         .select("ID")
-        .eq("FIELD_CONFIG_ID", id);
+        .eq("FIELD_CONFIG_ID", fieldConfigId);
 
       if (fetchError) {
-        console.error("Error while fetching field config IDs:", fetchError);
-        return c.json({ error: "Error while fetching field config IDs." }, 400);
+        console.error("Error while fetching field subconfig IDs:", fetchError);
+        return c.json(
+          { error: "Error while fetching field subconfig IDs." },
+          400
+        );
       }
 
-      const currentConfigIdSet = new Set(
-        currentConfigIds.map((config) => config.ID)
+      const currentSubconfigIdSet = new Set(
+        currentSubconfigIds.map((config) => config.ID)
       );
-      const formattedConfigIdSet = new Set(
-        formattedConfigs.map((config: { ID: string }) => config.ID)
-      );
-
-      const newConfigs = formattedConfigs.filter(
-        (config: { ID: string }) => !currentConfigIdSet.has(config.ID)
-      );
-      const deletedConfigs = Array.from(currentConfigIdSet).filter(
-        (id) => !formattedConfigIdSet.has(id)
-      );
-      const updatedConfigs = formattedConfigs.filter((config: { ID: string }) =>
-        currentConfigIdSet.has(config.ID)
+      const formattedSubconfigIdSet = new Set(
+        formattedSubconfigs.map((config: { ID: string }) => config.ID)
       );
 
-      // Insert new configs
-      for (const newConfig of newConfigs) {
+      const newSubconfigs = formattedSubconfigs.filter(
+        (config: { ID: string }) => !currentSubconfigIdSet.has(config.ID)
+      );
+      const deletedSubconfigs = Array.from(currentSubconfigIdSet).filter(
+        (id) => !formattedSubconfigIdSet.has(id)
+      );
+      const updatedSubconfigs = formattedSubconfigs.filter(
+        (config: { ID: string }) => currentSubconfigIdSet.has(config.ID)
+      );
+
+      for (const newSubconfig of newSubconfigs) {
         const { error: insertError } = await supabase
           .from("FIELDS_SUBCONFIGS")
           .insert({
-            FIELD_CONFIG_ID: id,
-            DATA_UNIT: newConfig.DATA_UNIT,
-            DB_SELECT: newConfig.DB_SELECT,
-            HOVER_TEXT: newConfig.HOVER_TEXT,
-            ID: newConfig.ID,
-            LINKED_ACTIVE: newConfig.LINKED_ACTIVE,
+            FIELD_CONFIG_ID: fieldConfigId,
+            DATA_UNIT: newSubconfig.DATA_UNIT,
+            DB_SELECT: newSubconfig.DB_SELECT,
+            HOVER_TEXT: newSubconfig.HOVER_TEXT,
+            ID: newSubconfig.ID,
+            LINKED_ACTIVE: newSubconfig.LINKED_ACTIVE,
             LINKED_SAME_DEFAULT_UNTOUCHED:
-              newConfig.LINKED_SAME_DEFAULT_UNTOUCHED,
-            LINKED_SAME_ON_VALIDATE: newConfig.LINKED_SAME_ON_VALIDATE,
-            POPUP: newConfig.POPUP,
-            SELECT: newConfig.SELECT,
-            SHOW_NAME: newConfig.SHOW_NAME,
-            REQUIRED: newConfig.REQUIRED,
-            SIZE: newConfig.SIZE,
-            TYPE: newConfig.TYPE,
-            VALUE: newConfig.VALUE,
+              newSubconfig.LINKED_SAME_DEFAULT_UNTOUCHED,
+            LINKED_SAME_ON_VALIDATE: newSubconfig.LINKED_SAME_ON_VALIDATE,
+            POPUP: newSubconfig.POPUP,
+            SELECT: newSubconfig.SELECT,
+            SHOW_NAME: newSubconfig.SHOW_NAME,
+            REQUIRED: newSubconfig.REQUIRED,
+            SIZE: newSubconfig.SIZE,
+            TYPE: newSubconfig.TYPE,
+            VALUE: newSubconfig.VALUE,
           });
 
         if (insertError) {
-          console.error("Error while inserting field config:", insertError);
-          return c.json({ error: "Error while inserting field config." }, 400);
+          console.error("Error while inserting field subconfig:", insertError);
+          return c.json(
+            { error: "Error while inserting field subconfig." },
+            400
+          );
         }
       }
 
-      // Update existing configs
-      for (const updatedConfig of updatedConfigs) {
+      for (const updatedSubconfig of updatedSubconfigs) {
         const { error: updateError } = await supabase
           .from("FIELDS_SUBCONFIGS")
           .update({
-            DATA_UNIT: updatedConfig.DATA_UNIT,
-            DB_SELECT: updatedConfig.DB_SELECT,
-            HOVER_TEXT: updatedConfig.HOVER_TEXT,
-            LINKED_ACTIVE: updatedConfig.LINKED_ACTIVE,
+            DATA_UNIT: updatedSubconfig.DATA_UNIT,
+            DB_SELECT: updatedSubconfig.DB_SELECT,
+            HOVER_TEXT: updatedSubconfig.HOVER_TEXT,
+            LINKED_ACTIVE: updatedSubconfig.LINKED_ACTIVE,
             LINKED_SAME_DEFAULT_UNTOUCHED:
-              updatedConfig.LINKED_SAME_DEFAULT_UNTOUCHED,
-            LINKED_SAME_ON_VALIDATE: updatedConfig.LINKED_SAME_ON_VALIDATE,
-            POPUP: updatedConfig.POPUP,
-            SELECT: updatedConfig.SELECT,
-            SHOW_NAME: updatedConfig.SHOW_NAME,
-            REQUIRED: updatedConfig.REQUIRED,
-            SIZE: updatedConfig.SIZE,
-            TYPE: updatedConfig.TYPE,
-            VALUE: updatedConfig.VALUE,
+              updatedSubconfig.LINKED_SAME_DEFAULT_UNTOUCHED,
+            LINKED_SAME_ON_VALIDATE: updatedSubconfig.LINKED_SAME_ON_VALIDATE,
+            POPUP: updatedSubconfig.POPUP,
+            SELECT: updatedSubconfig.SELECT,
+            SHOW_NAME: updatedSubconfig.SHOW_NAME,
+            REQUIRED: updatedSubconfig.REQUIRED,
+            SIZE: updatedSubconfig.SIZE,
+            TYPE: updatedSubconfig.TYPE,
+            VALUE: updatedSubconfig.VALUE,
           })
-          .eq("ID", updatedConfig.ID);
+          .eq("ID", updatedSubconfig.ID);
 
         if (updateError) {
-          console.error("Error while updating field config:", updateError);
-          return c.json({ error: "Error while updating field config." }, 400);
+          console.error("Error while updating field subconfig:", updateError);
+          return c.json(
+            { error: "Error while updating field subconfig." },
+            400
+          );
         }
       }
 
-      // Delete removed configs
-      for (const id of deletedConfigs) {
+      for (const id of deletedSubconfigs) {
         const { error: deleteError } = await supabase
           .from("FIELDS_SUBCONFIGS")
           .delete()
           .eq("ID", id);
 
         if (deleteError) {
-          console.error("Error while deleting field config:", deleteError);
-          return c.json({ error: "Error while deleting field config." }, 400);
+          console.error("Error while deleting field subconfig:", deleteError);
+          return c.json(
+            { error: "Error while deleting field subconfig." },
+            400
+          );
         }
       }
 
-      console.log("Field configs updated successfully");
-      return c.json({ message: "Field configs updated successfully" }, 200);
+      console.log("Field subconfigs updated successfully");
+      return c.json({ message: "Field subconfigs updated successfully" }, 200);
     } catch (error) {
       console.error(
-        "Internal server error while updating field configs:",
+        "Internal server error while updating field subconfigs:",
         error
       );
       return c.json(
-        { error: "Internal server error while updating field configs." },
+        { error: "Internal server error while updating field subconfigs." },
         500
       );
     }
   }
 );
 
-app.post(
-  "/createConfig",
-  userMiddleware,
-  createConfigDesc,
-  async (c: Context) => {
-    const supabase = c.get("supabase");
+app.post("/configs", userMiddleware, createConfigDesc, async (c: Context) => {
+  const supabase = c.get("supabase");
 
-    try {
-      const { id } = await c.req.json();
+  try {
+    const { id } = await c.req.json();
 
-      const { data, error } = await supabase
-        .from("FIELDS_CONFIGS")
-        .insert({ FIELD_ID: id });
+    const { data, error } = await supabase
+      .from("FIELDS_CONFIGS")
+      .insert({ FIELD_ID: id });
 
-      if (error) {
-        console.error("Error while creating config:", error);
-        return c.json({ error: "Error while creating config." }, 400);
-      }
-
-      console.log("Config created successfully");
-      return c.json(data, 201);
-    } catch (error) {
-      console.error("Internal server error while creating config:", error);
-      return c.json(
-        { error: "Internal server error while creating config." },
-        500
-      );
+    if (error) {
+      console.error("Error while creating config:", error);
+      return c.json({ error: "Error while creating config." }, 400);
     }
+
+    console.log("Config created successfully");
+    return c.json(data, 201);
+  } catch (error) {
+    console.error("Internal server error while creating config:", error);
+    return c.json(
+      { error: "Internal server error while creating config." },
+      500
+    );
   }
-);
+});
 
 app.delete(
-  "/deleteConfig",
+  "/configs/:id",
   userMiddleware,
   deleteConfigDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const id = c.req.param("id");
 
     try {
-      const { id } = await c.req.json();
-
       const { error } = await supabase
         .from("FIELDS_CONFIGS")
         .delete()
@@ -382,58 +372,17 @@ app.delete(
   }
 );
 
-app.get(
-  "/getFieldsConfigsIdsActiveForAnAwning/:awningId",
-  userMiddleware,
-  getFieldsConfigsIdsActiveForAnAwningDesc,
-  async (c: Context) => {
-    const supabase = c.get("supabase");
-    const awningId = c.req.param("awningId");
-
-    try {
-      const { data, error } = await supabase
-        .from("AWNINGS_FIELDS_CONFIGS")
-        .select("FIELD_CONFIG_ID")
-        .eq("AWNING_ID", awningId);
-
-      const formattedData = Case.deepConvertKeys(
-        (data ?? []).map((item) => item["FIELD_CONFIG_ID"]),
-        Case.toCamelCase
-      );
-
-      if (error) {
-        console.error("Error while getting active fields for awning:", error);
-        return c.json(
-          { error: "Error while getting active fields for awning." },
-          400
-        );
-      }
-
-      console.log("Active fields retrieved successfully");
-      return c.json(formattedData, 200);
-    } catch (error) {
-      console.error(
-        "Internal server error while getting active fields:",
-        error
-      );
-      return c.json(
-        { error: "Internal server error while getting active fields." },
-        500
-      );
-    }
-  }
-);
-
-app.post(
-  "/linkFieldConfigToAnAwning",
+app.put(
+  "/configs/:id/link/:awningId",
   userMiddleware,
   linkFieldConfigToAnAwningDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const fieldIdToLink = c.req.param("id");
+    const awningId = c.req.param("awningId");
+    const fieldsIdsToUnlink = await c.req.json();
 
     try {
-      const { fieldsIdsToUnlink, fieldIdToLink, awningId } = await c.req.json();
-
       const deletePromises = fieldsIdsToUnlink.map(async (fieldId: string) => {
         const { error } = await supabase
           .from("AWNINGS_FIELDS_CONFIGS")
@@ -468,16 +417,16 @@ app.post(
   }
 );
 
-app.post(
-  "/unlinkFieldConfigToAnAwning",
+app.put(
+  "/configs/:id/unlink/:awningId",
   userMiddleware,
-  unlinkFieldConfigToAnAwningDesc,
+  unlinkFieldConfigFromAnAwningDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const fieldIdToUnlink = c.req.param("id");
+    const awningId = c.req.param("awningId");
 
     try {
-      const { fieldIdToUnlink, awningId } = await c.req.json();
-
       const { error } = await supabase
         .from("AWNINGS_FIELDS_CONFIGS")
         .delete()
@@ -506,16 +455,15 @@ app.post(
   }
 );
 
-app.post(
-  "/linkFieldConfigForAllAwnings",
+app.put(
+  "/configs/:id/link-to-all-awnings",
   userMiddleware,
-  linkFieldConfigForAllAwningsDesc,
+  linkFieldConfigToAllAwningsDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const fieldConfigId = c.req.param("id");
 
     try {
-      const { fieldConfigId } = await c.req.json();
-
       const { data: AWNINGS, error: awningsError } = await supabase
         .from("AWNINGS")
         .select("ID");
@@ -576,16 +524,15 @@ app.post(
   }
 );
 
-app.post(
-  "/unlinkFieldConfigForAllAwnings",
+app.put(
+  "/configs/:id/unlink-from-all-awnings",
   userMiddleware,
-  unlinkFieldConfigForAllAwningsDesc,
+  unlinkFieldConfigFromAllAwningsDesc,
   async (c: Context) => {
     const supabase = c.get("supabase");
+    const fieldConfigId = c.req.param("id");
 
     try {
-      const { fieldConfigId } = await c.req.json();
-
       const { error } = await supabase
         .from("AWNINGS_FIELDS_CONFIGS")
         .delete()
@@ -608,6 +555,60 @@ app.post(
       );
       return c.json(
         { error: "Internal server error while unlinking from all awnings." },
+        500
+      );
+    }
+  }
+);
+
+app.get(
+  "/:id/awnings",
+  userMiddleware,
+  getAwningsByFieldIdDesc,
+  async (c: Context) => {
+    const supabase = c.get("supabase");
+    const fieldId = c.req.param("id");
+
+    try {
+      const { data, error } = await supabase
+        .from("AWNINGS_FIELDS_CONFIGS")
+        .select("AWNINGS(*)")
+        .eq("FIELD_ID", fieldId);
+
+      if (error) {
+        console.error(
+          "Internal server error while getting awnings by field id:",
+          error
+        );
+        return c.json(
+          { error: "Internal server error while getting awnings by field id." },
+          500
+        );
+      }
+
+      const uniqueAwningsData = Array.from(
+        new Set(data.map((item: any) => item["AWNINGS"]["ID"]))
+      )
+        .map((id) => data.find((item: any) => item["AWNINGS"]["ID"] === id))
+        .map((item: any) => ({
+          ID: item["AWNINGS"]["ID"],
+          AWNING_MODEL_ID: item["AWNINGS"]["AWNING_MODEL_ID"],
+          value: item["AWNINGS"]["VALUE"],
+        }));
+
+      const awnings: IAwning[] = Case.deepConvertKeys(
+        uniqueAwningsData,
+        Case.toCamelCase
+      );
+
+      return c.json(awnings, 200);
+    } catch (error) {
+      console.error(
+        "Internal server error while getting awnings by field id:",
+        error
+      );
+      return c.json(
+        { error: "Internal server error while getting awnings by field id." },
         500
       );
     }

@@ -65,7 +65,6 @@ export const putFieldDesc = describeRoute({
         schema: {
           type: "object",
           properties: {
-            id: { type: "string", description: "Field ID" },
             name: { type: "string", description: "Field name" },
             description: { type: "string", description: "Field description" },
             saveOnRequest: { type: "boolean", description: "Save on request" },
@@ -76,7 +75,7 @@ export const putFieldDesc = describeRoute({
     },
   },
   responses: {
-    201: {
+    200: {
       description: "Field updated successfully",
       content: {
         "application/json": {
@@ -158,22 +157,17 @@ export const putFieldsOrderDesc = describeRoute({
 
 export const deleteFieldDesc = describeRoute({
   summary: "Delete a field",
-  description: "This endpoint deletes a field.",
+  description: "This endpoint deletes a field by its ID.",
   tags: ["Fields"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Field ID" },
-          },
-          required: ["id"],
-        },
-      },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field to delete",
     },
-  },
+  ],
   responses: {
     200: {
       description: "Field deleted successfully",
@@ -189,10 +183,15 @@ export const deleteFieldDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid field ID",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
@@ -200,7 +199,12 @@ export const deleteFieldDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
@@ -208,30 +212,64 @@ export const deleteFieldDesc = describeRoute({
 });
 
 export const putFieldConfigsDesc = describeRoute({
-  summary: "Update field configurations",
-  description: "This endpoint updates field configurations.",
+  summary: "Update field subconfigs",
+  description:
+    "This endpoint updates the subconfigs of a specific field configuration.",
   tags: ["Fields"],
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field subconfiguration to update",
+    },
+  ],
   requestBody: {
     required: true,
     content: {
       "application/json": {
         schema: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Field ID" },
-            configs: {
-              type: "array",
-              items: fieldSubconfigSchema,
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string", description: "Subconfig ID" },
+              dataUnit: { type: "string", description: "Data unit" },
+              dbSelect: {
+                type: "string",
+                description: "Database select query",
+              },
+              hoverText: { type: "string", description: "Hover text" },
+              linkedActive: {
+                type: "boolean",
+                description: "Linked active flag",
+              },
+              linkedSameDefaultUntouched: {
+                type: "boolean",
+                description: "Flag for linked same default untouched",
+              },
+              linkedSameOnValidate: {
+                type: "boolean",
+                description: "Flag for linked same on validate",
+              },
+              popup: { type: "boolean", description: "Popup flag" },
+              select: { type: "boolean", description: "Select flag" },
+              showName: { type: "boolean", description: "Show name flag" },
+              required: { type: "boolean", description: "Required flag" },
+              size: { type: "string", description: "Size of the field" },
+              type: { type: "string", description: "Type of the field" },
+              value: { type: "string", description: "Value of the field" },
             },
+            required: ["id", "type", "value"],
           },
-          required: ["id", "configs"],
         },
       },
     },
   },
   responses: {
     200: {
-      description: "Field configurations updated successfully",
+      description: "Field subconfigs updated successfully",
       content: {
         "application/json": {
           schema: {
@@ -244,10 +282,15 @@ export const putFieldConfigsDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid input data",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
@@ -255,7 +298,12 @@ export const putFieldConfigsDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
@@ -318,20 +366,15 @@ export const deleteConfigDesc = describeRoute({
   summary: "Delete a field configuration",
   description: "This endpoint deletes a field configuration.",
   tags: ["Fields"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            id: { type: "string", description: "Field Config ID" },
-          },
-          required: ["id"],
-        },
-      },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field configuration to delete",
     },
-  },
+  ],
   responses: {
     200: {
       description: "Field configuration deleted successfully",
@@ -365,71 +408,36 @@ export const deleteConfigDesc = describeRoute({
   },
 });
 
-export const getFieldsConfigsIdsActiveForAnAwningDesc = describeRoute({
-  summary: "Get active field configurations for an awning",
+export const linkFieldConfigToAnAwningDesc = describeRoute({
+  summary: "Link a field configuration to an awning",
   description:
-    "This endpoint retrieves active field configurations for an awning.",
+    "This endpoint links a field configuration to a specific awning and unlinks the others.",
   tags: ["Fields"],
   parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field configuration to link",
+    },
     {
       name: "awningId",
       in: "path",
       required: true,
       schema: { type: "string" },
-      description: "Awning ID",
+      description: "The ID of the awning to link the field configuration to",
     },
   ],
-  responses: {
-    200: {
-      description: "Active field configurations retrieved successfully",
-      content: {
-        "application/json": {
-          schema: {
-            type: "array",
-            items: { type: "string" },
-          },
-        },
-      },
-    },
-    400: {
-      description: "Bad request",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-    500: {
-      description: "Internal server error",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-  },
-});
-
-export const linkFieldConfigToAnAwningDesc = describeRoute({
-  summary: "Link a field configuration to an awning",
-  description: "This endpoint links a field configuration to an awning.",
-  tags: ["Fields"],
   requestBody: {
     required: true,
     content: {
       "application/json": {
         schema: {
-          type: "object",
-          properties: {
-            fieldsIdsToUnlink: {
-              type: "array",
-              items: { type: "string" },
-              description: "Array of field IDs to unlink",
-            },
-            fieldIdToLink: { type: "string", description: "Field ID to link" },
-            awningId: { type: "string", description: "Awning ID" },
-          },
-          required: ["fieldsIdsToUnlink", "fieldIdToLink", "awningId"],
+          type: "array",
+          items: { type: "string" },
+          description:
+            "Array of field configuration IDs to unlink from the awning",
         },
       },
     },
@@ -449,7 +457,7 @@ export const linkFieldConfigToAnAwningDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid input data",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -467,28 +475,28 @@ export const linkFieldConfigToAnAwningDesc = describeRoute({
   },
 });
 
-export const unlinkFieldConfigToAnAwningDesc = describeRoute({
+export const unlinkFieldConfigFromAnAwningDesc = describeRoute({
   summary: "Unlink a field configuration from an awning",
-  description: "This endpoint unlinks a field configuration from an awning.",
+  description:
+    "This endpoint unlinks a specific field configuration from an awning.",
   tags: ["Fields"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            fieldIdToUnlink: {
-              type: "string",
-              description: "Field ID to unlink",
-            },
-            awningId: { type: "string", description: "Awning ID" },
-          },
-          required: ["fieldIdToUnlink", "awningId"],
-        },
-      },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field configuration to unlink",
     },
-  },
+    {
+      name: "awningId",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description:
+        "The ID of the awning from which the field configuration will be unlinked",
+    },
+  ],
   responses: {
     200: {
       description: "Field configuration unlinked from awning successfully",
@@ -504,7 +512,7 @@ export const unlinkFieldConfigToAnAwningDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid input data",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -522,24 +530,20 @@ export const unlinkFieldConfigToAnAwningDesc = describeRoute({
   },
 });
 
-export const linkFieldConfigForAllAwningsDesc = describeRoute({
+export const linkFieldConfigToAllAwningsDesc = describeRoute({
   summary: "Link a field configuration to all awnings",
-  description: "This endpoint links a field configuration to all awnings.",
+  description:
+    "This endpoint links a specific field configuration to all awnings.",
   tags: ["Fields"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            fieldConfigId: { type: "string", description: "Field Config ID" },
-          },
-          required: ["fieldConfigId"],
-        },
-      },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field configuration to link to all awnings",
     },
-  },
+  ],
   responses: {
     200: {
       description: "Field configuration linked to all awnings successfully",
@@ -555,7 +559,7 @@ export const linkFieldConfigForAllAwningsDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid input data",
       content: {
         "application/json": {
           schema: errorResponseSchema,
@@ -573,24 +577,21 @@ export const linkFieldConfigForAllAwningsDesc = describeRoute({
   },
 });
 
-export const unlinkFieldConfigForAllAwningsDesc = describeRoute({
+export const unlinkFieldConfigFromAllAwningsDesc = describeRoute({
   summary: "Unlink a field configuration from all awnings",
-  description: "This endpoint unlinks a field configuration from all awnings.",
+  description:
+    "This endpoint unlinks a specific field configuration from all awnings.",
   tags: ["Fields"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            fieldConfigId: { type: "string", description: "Field Config ID" },
-          },
-          required: ["fieldConfigId"],
-        },
-      },
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description:
+        "The ID of the field configuration to unlink from all awnings",
     },
-  },
+  ],
   responses: {
     200: {
       description: "Field configuration unlinked from all awnings successfully",
@@ -606,10 +607,15 @@ export const unlinkFieldConfigForAllAwningsDesc = describeRoute({
       },
     },
     400: {
-      description: "Bad request",
+      description: "Bad request - Invalid input data",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
@@ -617,7 +623,77 @@ export const unlinkFieldConfigForAllAwningsDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
+export const getAwningsByFieldIdDesc = describeRoute({
+  summary: "Get awnings by field ID",
+  description:
+    "This endpoint retrieves all awnings associated with a specific field ID.",
+  tags: ["Fields"],
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "The ID of the field to retrieve associated awnings for",
+    },
+  ],
+  responses: {
+    200: {
+      description: "Awnings retrieved successfully",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string", description: "Awning ID" },
+                awningModelId: {
+                  type: "string",
+                  description: "Awning Model ID",
+                },
+                value: { type: "string", description: "Awning value" },
+              },
+            },
+          },
+        },
+      },
+    },
+    400: {
+      description: "Bad request - Invalid field ID",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              error: { type: "string", description: "Error message" },
+            },
+          },
         },
       },
     },
