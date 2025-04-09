@@ -19,7 +19,10 @@ type Bindings = {
   CLIENT_STATIC_URL: string;
 };
 
-const app = new Hono<{ Bindings: Bindings }>().basePath("/v3");
+const app = new Hono<{ Bindings: Bindings }>();
+
+// Versioning
+app.basePath("/v3");
 
 // CORS configuration
 app.use("*", corsMiddleware);
