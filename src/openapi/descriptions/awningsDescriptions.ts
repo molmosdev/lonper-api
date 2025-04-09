@@ -1,5 +1,5 @@
 import { describeRoute } from "hono-openapi";
-import { awningSchema, errorResponseSchema } from "../schemas";
+import { awningSchema, errorResponseSchema, groupSchema } from "../schemas";
 
 export const getAwningsDesc = describeRoute({
   summary: "Get all awnings",
@@ -420,6 +420,42 @@ export const getAwningPriceDesc = describeRoute({
               },
             },
           },
+        },
+      },
+    },
+  },
+});
+
+export const getGroupsForAnAwningDesc = describeRoute({
+  summary: "Get groups for an awning",
+  description: "This endpoint retrieves groups for a specific awning.",
+  tags: ["Awnings"],
+  parameters: [
+    {
+      name: "awningId",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+      description: "Awning ID",
+    },
+  ],
+  responses: {
+    200: {
+      description: "Groups retrieved successfully",
+      content: {
+        "application/json": {
+          schema: {
+            type: "array",
+            items: groupSchema,
+          },
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
         },
       },
     },

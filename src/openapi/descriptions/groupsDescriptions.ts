@@ -28,42 +28,6 @@ export const getGroupsDesc = describeRoute({
   },
 });
 
-export const getGroupsForAnAwningDesc = describeRoute({
-  summary: "Get groups for an awning",
-  description: "This endpoint retrieves groups for a specific awning.",
-  tags: ["Groups"],
-  parameters: [
-    {
-      name: "awningId",
-      in: "path",
-      required: true,
-      schema: { type: "string" },
-      description: "Awning ID",
-    },
-  ],
-  responses: {
-    200: {
-      description: "Groups retrieved successfully",
-      content: {
-        "application/json": {
-          schema: {
-            type: "array",
-            items: groupSchema,
-          },
-        },
-      },
-    },
-    500: {
-      description: "Internal server error",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-  },
-});
-
 export const postGroupDesc = describeRoute({
   summary: "Create a new group",
   description: "This endpoint creates a new group.",
