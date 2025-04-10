@@ -31,7 +31,7 @@ export const swaggerConfig = (app: any) => {
             description: "Local server",
           },
           {
-            url: "https://lonper.pages.dev",
+            url: "https://api.lonper.molmos.dev",
             description: "Production server",
           },
         ],
