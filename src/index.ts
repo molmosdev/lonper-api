@@ -17,6 +17,9 @@ type Bindings = {
   SWAGGER_USER: string;
   SWAGGER_PASSWORD: string;
   CLIENT_STATIC_URL: string;
+  DELFOS_BASE_URL: string;
+  DELFOS_USER: string;
+  DELFOS_PASSWORD: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>().basePath("v2");

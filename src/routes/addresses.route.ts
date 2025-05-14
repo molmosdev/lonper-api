@@ -1,38 +1,31 @@
 import { Context, Hono } from "hono";
-import { userMiddleware } from "../middlewares/user.middleware";
+import { IRequestAddress, User } from "@lonper/types";
 import {
   getAddressesDesc,
   postAddressDesc,
-  putAddressDesc,
-  deleteAddressDesc,
 } from "../openapi/descriptions/addressesDescriptions";
-import { IRequestAddress, User } from "@lonper/types";
-import Case from "../utils/case";
+import { userMiddleware } from "../middlewares/user.middleware";
+import { DelfosClient } from "../services/delfos-client.service";
 
 const app = new Hono();
+const delfosClient = new DelfosClient();
 
 app.get("/", userMiddleware, getAddressesDesc, async (c: Context) => {
   const user: User = c.get("user");
-  const supabase = c.get("supabase");
-
+  const clientNumber = user.user_metadata?.commercialData?.clientNumber;
+  if (!clientNumber) {
+    return c.json({ error: "Client number not found" }, 400);
+  }
   try {
-    const { data, error } = await supabase
-      .from("ADDRESSES")
-      .select("*")
-      .eq("CLIENT_EMAIL", user.email);
-    if (error) {
-      console.error("error", error);
-      return c.json(
-        { error: "Internal server error while getting the addresses." },
-        400
-      );
-    }
-    const addresses: IRequestAddress[] =
-      Case.deepConvertKeys(data, Case.toCamelCase) || [];
-
-    return c.json(addresses, 200);
+    app.use();
+    const addresses = await delfosClient.fetchFromDelfos<any[]>(
+      `clientes/${clientNumber}/direcciones`,
+      {},
+      c
+    );
+    return c.json(addresses);
   } catch (error) {
-    console.error("error", error);
+    console.error("Error fetching addresses:", error);
     return c.json(
       { error: "Internal server error while getting the addresses." },
       500
@@ -41,94 +34,27 @@ app.get("/", userMiddleware, getAddressesDesc, async (c: Context) => {
 });
 
 app.post("/", userMiddleware, postAddressDesc, async (c: Context) => {
-  const email = c.get("user").email;
-  const newAddress: IRequestAddress = await c.req.json();
-  console.log(newAddress);
-  const { city, country, postalCode, province, streetAndNumber } = newAddress;
-  const supabase = c.get("supabase");
-
+  const user: User = c.get("user");
+  const clientNumber = user.user_metadata?.commercialData?.clientNumber;
+  if (!clientNumber) {
+    return c.json({ error: "Client number not found" }, 400);
+  }
   try {
-    const { error } = await supabase.from("ADDRESSES").insert([
+    const body = await c.req.json();
+    // Llama a /clientes/{id}/direcciones en Delfos con el body recibido
+    const result = await delfosClient.fetchFromDelfos<any>(
+      `clientes/${clientNumber}/direcciones`,
       {
-        CITY: city,
-        COUNTRY: country,
-        POSTAL_CODE: postalCode,
-        PROVINCE: province,
-        STREET_AND_NUMBER: streetAndNumber,
-        CLIENT_EMAIL: email,
+        method: "POST",
+        body: JSON.stringify(body),
       },
-    ]);
-    if (error) {
-      console.error("error", error);
-      return c.json(
-        { error: "Internal server error while publishing the address." },
-        400
-      );
-    }
-    console.log(`Address successfully updated for '${email}'.`);
-    return c.json({ message: "Address created successfully." }, 200);
-  } catch (error) {
-    console.error("error", error);
-    return c.json(
-      { error: "Internal server error while publishing the address." },
-      500
+      c
     );
-  }
-});
-
-app.put("/:id", userMiddleware, putAddressDesc, async (c: Context) => {
-  const updatedAddress: IRequestAddress = await c.req.json();
-  const id = c.req.param("id");
-  const supabase = c.get("supabase");
-
-  try {
-    const { error } = await supabase
-      .from("ADDRESSES")
-      .update(Case.deepConvertKeys(updatedAddress, Case.toUpperSnakeCase))
-      .eq("ID", id);
-    if (error) {
-      console.error("error", error);
-      return c.json(
-        { error: "Internal server error while updating the address." },
-        400
-      );
-    }
-    console.log(`Address successfully updated for '${id}' id.`);
-    return c.json({ message: "Address successfully updated." }, 200);
+    return c.json(result, 201);
   } catch (error) {
-    console.error("error", error);
+    console.error("Error posting address:", error);
     return c.json(
-      { error: "Internal server error while updating the address." },
-      500
-    );
-  }
-});
-
-app.delete("/:id", userMiddleware, deleteAddressDesc, async (c: Context) => {
-  const id = c.req.param("id");
-  const supabase = c.get("supabase");
-
-  try {
-    const { data, error } = await supabase
-      .from("ADDRESSES")
-      .delete()
-      .eq("ID", id);
-    if (error) {
-      console.error("error", error);
-      return c.json(
-        { error: "Internal server error while deleting the address." },
-        400
-      );
-    }
-    if (data === null) {
-      return c.json({ message: "Address successfully deleted." }, 200);
-    } else {
-      return c.json({ error: "Address not found." }, 404);
-    }
-  } catch (error) {
-    console.error("error", error);
-    return c.json(
-      { error: "Internal server error while deleting the address." },
+      { error: "Internal server error while posting the address." },
       500
     );
   }

@@ -1,32 +1,59 @@
 import { describeRoute } from "hono-openapi";
-import {
-  addressSchema,
-  errorResponseSchema,
-  successMessageSchema,
-} from "../schemas";
 
 export const getAddressesDesc = describeRoute({
-  summary: "Retrieve User Addresses",
-  description:
-    "Fetches all addresses associated with the currently authenticated user.",
   tags: ["Addresses"],
+  summary: "Get client addresses",
+  description:
+    "Returns the list of addresses associated with the authenticated client.",
   responses: {
     200: {
-      description: "Addresses retrieved successfully.",
+      description: "List of client addresses",
       content: {
         "application/json": {
           schema: {
             type: "array",
-            items: addressSchema,
+            items: {
+              type: "object",
+              properties: {
+                TERCERO: { type: "integer", example: 25 },
+                DIRECCION: { type: "integer", example: 1 },
+                DIR_CLASE: { type: "integer", example: 1 },
+                NOMBRE_R_SOCIAL: {
+                  type: "string",
+                  example: "RUDIGER GOTTWALD",
+                },
+                NIF: { type: "string", example: "X4292354W" },
+                DIRECCION_2: { type: "string", example: "" },
+                DIR_COMPLETA: { type: "string", example: "CL  MAYOR 24" },
+                LOCALIDAD: { type: "string", example: "08018393" },
+                TITULO_LOCALIDAD: { type: "string", example: "CASTELLDEFELS" },
+                CODIGO_POSTAL: { type: "string", example: "08860" },
+                DIR_TELEFONO01: { type: "string", example: "936360960" },
+                DIR_TELEFONO02: { type: "string", example: "651513432" },
+                DIR_TELEFAX: { type: "string", example: "936656311" },
+                ID_LOCAL: { type: "integer", example: 4437 },
+                COLONIA: { type: "string", example: "" },
+                TITULO_PROVINCIA: { type: "string", example: "BARCELONA" },
+                DIR_DEFECTO: { type: "integer", example: 1 },
+              },
+            },
           },
         },
       },
     },
     500: {
-      description: "An error occurred while retrieving the addresses.",
+      description: "Internal server error",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "Error processing the request",
+              },
+            },
+          },
         },
       },
     },
@@ -34,114 +61,91 @@ export const getAddressesDesc = describeRoute({
 });
 
 export const postAddressDesc = describeRoute({
-  summary: "Create a New Address",
-  description:
-    "Allows the authenticated user to add a new address to their account.",
   tags: ["Addresses"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: addressSchema,
-      },
-    },
-  },
-  responses: {
-    200: {
-      description: "Address added successfully.",
-      content: {
-        "application/json": {
-          schema: successMessageSchema,
-        },
-      },
-    },
-    500: {
-      description: "An error occurred while adding the address.",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-  },
-});
-
-export const putAddressDesc = describeRoute({
-  summary: "Update an Existing Address",
-  description:
-    "Allows the authenticated user to update the details of an existing address.",
-  tags: ["Addresses"],
-  requestBody: {
-    required: true,
-    content: {
-      "application/json": {
-        schema: addressSchema,
-      },
-    },
-  },
-  responses: {
-    200: {
-      description: "Address updated successfully.",
-      content: {
-        "application/json": {
-          schema: successMessageSchema,
-        },
-      },
-    },
-    500: {
-      description: "An error occurred while updating the address.",
-      content: {
-        "application/json": {
-          schema: errorResponseSchema,
-        },
-      },
-    },
-  },
-});
-
-export const deleteAddressDesc = describeRoute({
-  summary: "Delete an Address",
-  description: "Allows the authenticated user to delete an address by its ID.",
-  tags: ["Addresses"],
+  summary: "Add an address to a client",
+  description: "Inserts a new address for the authenticated client.",
   requestBody: {
     required: true,
     content: {
       "application/json": {
         schema: {
           type: "object",
+          required: ["direccion", "dir_nombre"],
           properties: {
-            addressId: {
+            direccion: {
+              type: "integer",
+              example: 123,
+              description: "Address code",
+            },
+            dir_nombre: {
               type: "string",
-              description: "The unique ID of the address to delete.",
+              example: "Calle Falsa 123",
+              description: "Address name",
+            },
+            dir_nombre2: {
+              type: "string",
+              example: "Piso 4ºA",
+              description: "Additional address information",
+            },
+            telefono1: {
+              type: "string",
+              example: "600123456",
+              description: "Primary phone",
+            },
+            telefono2: {
+              type: "string",
+              example: "931234567",
+              description: "Secondary phone",
             },
           },
-          required: ["addressId"],
         },
       },
     },
   },
   responses: {
-    200: {
-      description: "Address deleted successfully.",
+    201: {
+      description: "Address successfully added",
       content: {
         "application/json": {
-          schema: successMessageSchema,
+          schema: {
+            type: "object",
+            properties: {
+              success: { type: "boolean", example: true },
+              id: { type: "integer", example: 456 },
+            },
+          },
         },
       },
     },
-    404: {
-      description: "The specified address was not found.",
+    400: {
+      description: "Validation error (required fields)",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "Fields 'direccion' and 'dir_nombre' are required",
+              },
+            },
+          },
         },
       },
     },
     500: {
-      description: "An error occurred while deleting the address.",
+      description: "Internal error or insertion failure",
       content: {
         "application/json": {
-          schema: errorResponseSchema,
+          schema: {
+            type: "object",
+            properties: {
+              error: {
+                type: "string",
+                example: "Could not save the address",
+              },
+            },
+          },
         },
       },
     },
