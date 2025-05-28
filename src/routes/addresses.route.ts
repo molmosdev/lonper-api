@@ -13,9 +13,6 @@ const delfosClient = new DelfosClient();
 app.get("/", userMiddleware, getAddressesDesc, async (c: Context) => {
   const user: User = c.get("user");
   const clientNumber = user.user_metadata?.commercialData?.clientNumber;
-  if (!clientNumber) {
-    return c.json({ error: "Client number not found" }, 400);
-  }
   try {
     app.use();
     const addresses = await delfosClient.fetchFromDelfos<any[]>(
@@ -23,7 +20,16 @@ app.get("/", userMiddleware, getAddressesDesc, async (c: Context) => {
       {},
       c
     );
-    return c.json(addresses);
+    const formattedAddresses: IRequestAddress[] = addresses.map((address) => ({
+      addressId: Number(address.DIRECCION),
+      streetAndNumber: address.DIR_COMPLETA,
+      addressComplement: address.DIRECCION_2 || undefined,
+      phone1: address.DIR_TELEFONO01 || "",
+      phone2: address.DIR_TELEFONO02 || undefined,
+      alternative: address.LOCALIDAD == "99999999" ? true : false,
+    }));
+
+    return c.json(formattedAddresses);
   } catch (error) {
     console.error("Error fetching addresses:", error);
     return c.json(
@@ -46,7 +52,13 @@ app.post("/", userMiddleware, postAddressDesc, async (c: Context) => {
       `clientes/${clientNumber}/direcciones`,
       {
         method: "POST",
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          direccion: body.addressId,
+          dir_nombre: body.streetAndNumber,
+          dir_nombre2: body.addressComplement,
+          telefono1: body.phone1,
+          telefono2: body.phone2,
+        }),
       },
       c
     );
