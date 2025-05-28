@@ -4,9 +4,11 @@ import {
   logoutDesc,
   sendPasswordResetEmailDesc,
   getCurrentUserDesc,
+  getClientsDesc,
 } from "../openapi/descriptions/authDescriptions";
 import { userMiddleware } from "../middlewares/user.middleware";
 import { AuthError } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 const app = new Hono();
 
@@ -78,6 +80,30 @@ app.post(
 
 app.get("/user", getCurrentUserDesc, userMiddleware, (c: Context) => {
   return c.json(c.get("user"), 200);
+});
+
+app.get("/clients", getClientsDesc, async (c: Context) => {
+  const supabaseService = createClient(
+    c.env.SUPABASE_URL,
+    c.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  // Fetch all users from Supabase auth.users
+  const { data, error } = await supabaseService.auth.admin.listUsers();
+
+  if (error) {
+    console.error("Error fetching clients:", error);
+    return c.json({ error: "Error fetching clients" }, 500);
+  }
+
+  // Filter users where role === 'lonper_client' and return only user_metadata
+  const clients = data.users
+    .filter((user: any) => user.role === "lonper_client")
+    .map((user: any) => user.user_metadata);
+
+  console.log(clients);
+
+  return c.json(clients, 200);
 });
 
 export default app;
