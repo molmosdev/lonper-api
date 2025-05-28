@@ -14,6 +14,7 @@ import awnings from "./routes/awnings.route";
 type Bindings = {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
   SWAGGER_USER: string;
   SWAGGER_PASSWORD: string;
   CLIENT_STATIC_URL: string;
