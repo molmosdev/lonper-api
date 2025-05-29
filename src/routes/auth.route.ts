@@ -96,12 +96,15 @@ app.get("/clients", getClientsDesc, async (c: Context) => {
     return c.json({ error: "Error fetching clients" }, 500);
   }
 
-  // Filter users where role === 'lonper_client' and return only user_metadata
+  // Filter users where role === 'lonper_client' and user_metadata.commercialData exists
   const clients = data.users
-    .filter((user: any) => user.role === "lonper_client")
+    .filter(
+      (user: any) =>
+        user.role === "lonper_client" &&
+        user.user_metadata &&
+        user.user_metadata.commercialData
+    )
     .map((user: any) => user.user_metadata);
-
-  console.log(clients);
 
   return c.json(clients, 200);
 });
