@@ -4,7 +4,7 @@ import {
   getRequestsDesc,
   postRequestDesc,
 } from "../openapi/descriptions/requestsDescriptions";
-import { IFilter, IRequest } from "@lonper/types";
+import { IFilter, IRequest, User } from "@lonper/types";
 import Case from "../utils/case";
 
 const app = new Hono();
@@ -36,7 +36,8 @@ app.post("/", userMiddleware, postRequestDesc, async (c: Context) => {
 
 app.get("/", userMiddleware, getRequestsDesc, async (c: Context) => {
   const supabase = c.get("supabase");
-  const email = c.get("user").email;
+  const user: User = c.get("user");
+  const clientNumber = user.user_metadata?.commercialData?.clientNumber;
   const {
     filters = "",
     sortedBy = "deliveryDate:asc",
@@ -45,7 +46,10 @@ app.get("/", userMiddleware, getRequestsDesc, async (c: Context) => {
   } = c.req.query();
 
   try {
-    let query = supabase.from("REQUESTS").select("*").eq("EMAIL", email);
+    let query = supabase
+      .from("REQUESTS")
+      .select("*")
+      .eq("CLIENT_NUMBER", clientNumber);
 
     if (filters) {
       const filtersArray: IFilter[] = JSON.parse(filters);
