@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
+import { getCookie } from "hono/cookie";
 
 /**
  * Represents the request body for the Delfos login endpoint.
@@ -58,63 +58,34 @@ export class DelfosClient {
   }
 
   /**
-   * Fetches data from the Delfos API using the stored token, refreshing it if necessary.
-   * @param path - The API path to fetch.
-   * @param options - Fetch options.
-   * @param c - Hono context.
-   * @param retry - Whether to retry once on 401 Unauthorized.
-   * @returns The response data.
-   * @throws Error if the API call fails.
+   * Fetches data from the Delfos API using the stored token.
+   *
+   * @typeParam T - The expected response type.
+   * @param path - The API path to fetch (relative to DELFOS_BASE_URL).
+   * @param options - Additional fetch options (optional).
+   * @param c - Hono context, used to retrieve the token and environment variables.
+   * @returns The response data parsed as type T.
+   * @throws Error if the Delfos token is missing or the API call fails.
    */
   async fetchFromDelfos<T>(
     path: string,
     options: RequestInit = {},
-    c: Context,
-    retry = true
+    c: Context
   ): Promise<T> {
-    let token = getCookie(c, "delfos_token") || "";
-
-    // If there is no token, try login and retry the request
-    if (!token && retry) {
-      const loginRes = await this.login(c.env.DELFOS_BASE_URL, {
-        usuario: c.env.DELFOS_USER,
-        password: c.env.DELFOS_PASSWORD,
-      });
-      if (!loginRes.token) {
-        throw new Error("Failed to obtain Delfos token");
-      }
-      setCookie(c, "delfos_token", loginRes.token);
-      // Retry the request with the new token, but do not login again if it fails
-      return this.fetchFromDelfos<T>(path, options, c, false);
-    }
+    const token = c.get("delfos_token") || getCookie(c, "delfos_token");
+    if (!token) throw new Error("Missing Delfos token");
 
     const headers = new Headers(options.headers);
     headers.set("Authorization", `Bearer ${token}`);
     headers.set("Content-Type", "application/json");
 
-    const fetchOptions: RequestInit = {
+    const res = await fetch(`${c.env.DELFOS_BASE_URL}/${path}`, {
       ...options,
-      headers: headers,
-      body: options.body,
-    };
-
-    const res = await fetch(`${c.env.DELFOS_BASE_URL}/${path}`, fetchOptions);
-
-    if (res.status === 401 && retry) {
-      // Expired or invalid token, try login and retry
-      const loginRes = await this.login(c.env.DELFOS_BASE_URL, {
-        usuario: c.env.DELFOS_USER,
-        password: c.env.DELFOS_PASSWORD,
-      });
-      if (!loginRes.token) {
-        throw new Error("Failed to obtain Delfos token");
-      }
-      setCookie(c, "delfos_token", loginRes.token);
-      return this.fetchFromDelfos<T>(path, options, c, false);
-    }
+      headers,
+    });
 
     if (!res.ok) {
-      throw new Error("Error calling the Delfos API");
+      throw new Error(`Error ${res.status}: ${res.statusText}`);
     }
 
     return res.json() as Promise<T>;
