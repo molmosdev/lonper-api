@@ -1,0 +1,6 @@
+name = "lonper-api"
+main = "src/index.ts"
+compatibility_date = "2025-04-07"
+
+[observability.logs]
+enabled = true
