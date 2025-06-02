@@ -69,7 +69,7 @@ export const putFieldDesc = describeRoute({
             name: { type: "string", description: "Field name" },
             description: { type: "string", description: "Field description" },
             saveOnRequest: { type: "boolean", description: "Save on request" },
-            delfosId: { type: "string", description: "Delfos ID" }, // Nuevo campo
+            delfosId: { type: "string", description: "Delfos ID" }, // <-- ya está aquí
           },
           required: ["name", "description", "saveOnRequest"],
         },

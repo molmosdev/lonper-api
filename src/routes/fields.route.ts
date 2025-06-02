@@ -69,7 +69,7 @@ app.put("/:id", userMiddleware, putFieldDesc, async (c: Context) => {
   const id = c.req.param("id");
 
   try {
-    const { name, description, saveOnRequest } = await c.req.json();
+    const { name, description, saveOnRequest, delfosId } = await c.req.json();
 
     const { data, error } = await supabase
       .from("FIELDS")
@@ -77,6 +77,7 @@ app.put("/:id", userMiddleware, putFieldDesc, async (c: Context) => {
         NAME: name,
         DESCRIPTION: description,
         SAVE_ON_REQUEST: saveOnRequest,
+        DELFOS_ID: delfosId,
       })
       .eq("ID", id);
 
