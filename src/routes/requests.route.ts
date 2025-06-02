@@ -4,13 +4,7 @@ import {
   getRequestsDesc,
   postRequestDesc,
 } from "../openapi/descriptions/requestsDescriptions";
-import {
-  CommercialData,
-  IFilter,
-  IRequest,
-  User,
-  UserMetadata,
-} from "@lonper/types";
+import { CommercialData, IFilter, IRequest, User } from "@lonper/types";
 import Case from "../utils/case";
 import { clientMetadataMiddleware } from "../middlewares/client-metadata.middleware";
 
