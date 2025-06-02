@@ -20,6 +20,7 @@ export const postFieldDesc = describeRoute({
             description: { type: "string", description: "Field description" },
             saveOnRequest: { type: "boolean", description: "Save on request" },
             groupId: { type: "string", description: "Group ID" },
+            delfosId: { type: "string", description: "Delfos ID" },
           },
           required: ["name", "description", "saveOnRequest", "groupId"],
         },
@@ -68,8 +69,9 @@ export const putFieldDesc = describeRoute({
             name: { type: "string", description: "Field name" },
             description: { type: "string", description: "Field description" },
             saveOnRequest: { type: "boolean", description: "Save on request" },
+            delfosId: { type: "string", description: "Delfos ID" }, // Nuevo campo
           },
-          required: ["id", "name", "description", "saveOnRequest"],
+          required: ["name", "description", "saveOnRequest"],
         },
       },
     },
@@ -610,12 +612,7 @@ export const unlinkFieldConfigFromAllAwningsDesc = describeRoute({
       description: "Bad request - Invalid input data",
       content: {
         "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              error: { type: "string", description: "Error message" },
-            },
-          },
+          schema: errorResponseSchema,
         },
       },
     },
@@ -623,12 +620,7 @@ export const unlinkFieldConfigFromAllAwningsDesc = describeRoute({
       description: "Internal server error",
       content: {
         "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              error: { type: "string", description: "Error message" },
-            },
-          },
+          schema: errorResponseSchema,
         },
       },
     },

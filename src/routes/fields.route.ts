@@ -23,7 +23,8 @@ app.post("/", userMiddleware, postFieldDesc, async (c: Context) => {
   const supabase = c.get("supabase");
 
   try {
-    const { name, description, saveOnRequest, groupId } = await c.req.json();
+    const { name, description, saveOnRequest, groupId, delfosId } =
+      await c.req.json();
 
     const { data: fields, error: fetchError } = await supabase
       .from("FIELDS")
@@ -43,6 +44,7 @@ app.post("/", userMiddleware, postFieldDesc, async (c: Context) => {
         ORDER: newOrderIndex,
         GROUP_ID: groupId,
         SAVE_ON_REQUEST: saveOnRequest,
+        DELFOS_ID: delfosId,
       },
     ]);
 
