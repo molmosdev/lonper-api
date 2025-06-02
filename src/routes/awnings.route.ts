@@ -1,5 +1,6 @@
 import { Context, Hono } from "hono";
 import { userMiddleware } from "../middlewares/user.middleware";
+import { clientMetadataMiddleware } from "../middlewares/client-metadata.middleware";
 import {
   getAwningsDesc,
   getAwningDesc,
@@ -16,165 +17,191 @@ import Case from "../utils/case";
 
 const app = new Hono();
 
-app.get("/price", userMiddleware, getAwningPriceDesc, async (c: Context) => {
-  const supabase = c.get("supabase");
-  const {
-    model,
-    line: lineParam,
-    exit: exitParam,
-    tarp,
-    ral,
-    familyCode,
-  } = c.req.query();
-
-  try {
-    const line = parseInt(lineParam);
-    const exit = parseInt(exitParam);
-
-    if (isNaN(line) || isNaN(exit)) {
-      return c.json({ error: "Invalid line or exit parameter." }, 400);
-    }
-
-    const user = c.get("user");
-    const commercialData = user.user_metadata?.commercialData || {};
+app.get(
+  "/price",
+  userMiddleware,
+  clientMetadataMiddleware,
+  getAwningPriceDesc,
+  async (c: Context) => {
+    const supabase = c.get("supabase");
     const {
-      commercialDiscount1 = 0,
-      commercialDiscount2 = 0,
-      commercialDiscount3 = 0,
-      clientNumber,
-    } = commercialData;
+      model,
+      line: lineParam,
+      exit: exitParam,
+      tarp,
+      ral,
+      familyCode,
+    } = c.req.query();
 
-    if (!tarp) {
-      return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
-    }
+    try {
+      const line = parseInt(lineParam);
+      const exit = parseInt(exitParam);
 
-    const { data: articleData, error: articleError } = await supabase
-      .from("ARTICLES")
-      .select("LON_RATE")
-      .eq("ARTICLE", tarp);
-
-    if (articleError) {
-      console.error("Error while getting article data:", articleError);
-      return c.json({ error: "Error while getting article data." }, 500);
-    }
-
-    const lonTarp = articleData[0]?.["LON_RATE"]?.trim();
-
-    if (!lonTarp) {
-      return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
-    }
-
-    const { data: awningData, error: awningError } = await supabase.rpc(
-      "get_closest_awning",
-      {
-        _model: model,
-        _tarp: lonTarp,
-        _line: line,
-        _exit: exit,
+      if (isNaN(line) || isNaN(exit)) {
+        return c.json({ error: "Invalid line or exit parameter." }, 400);
       }
-    );
 
-    if (awningError) {
-      console.error("Error while getting awning data:", awningError);
-      return c.json({ error: "Error while getting awning data." }, 500);
-    }
+      const user = c.get("user");
+      const clientMetadata = c.get("clientMetadata");
+      const commercialData =
+        clientMetadata?.commercialData ||
+        user.user_metadata?.commercialData ||
+        {};
+      const {
+        commercialDiscount1 = 0,
+        commercialDiscount2 = 0,
+        commercialDiscount3 = 0,
+        clientNumber,
+      } = commercialData;
 
-    if (awningData.length === 0) {
-      return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
-    }
+      if (!tarp) {
+        return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
+      }
 
-    const awningPrice: IAwningPrice = Case.deepConvertKeys(
-      awningData[0],
-      Case.toCamelCase
-    );
+      const { data: articleData, error: articleError } = await supabase
+        .from("ARTICLES")
+        .select("LON_RATE")
+        .eq("ARTICLE", tarp);
 
-    if (awningPrice && awningPrice.rate === 1) {
-      awningPrice.rate = 0;
-    }
+      if (articleError) {
+        console.error("Error while getting article data:", articleError);
+        return c.json({ error: "Error while getting article data." }, 500);
+      }
 
-    const { data: surchargeData, error: surchargeError } = await supabase
-      .from("COLOR_SURCHAGES")
-      .select("SURCHAGE_PERCENTAGE")
-      .eq("MODEL_CODE", model)
-      .eq("COLOR_DESCRIPTION", ral);
+      const lonTarp = articleData[0]?.["LON_RATE"]?.trim();
 
-    if (surchargeError) {
-      console.error("Error while getting surcharge data:", surchargeError);
-      return c.json({ error: "Error while getting surcharge data." }, 500);
-    }
+      if (!lonTarp) {
+        return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
+      }
 
-    if (
-      surchargeData.length > 0 &&
-      surchargeData[0]["SURCHAGE_PERCENTAGE"] !== 0
-    ) {
-      const surcharge = surchargeData[0]["SURCHAGE_PERCENTAGE"];
+      const { data: awningData, error: awningError } = await supabase.rpc(
+        "get_closest_awning",
+        {
+          _model: model,
+          _tarp: lonTarp,
+          _line: line,
+          _exit: exit,
+        }
+      );
 
-      if (lonTarp === "A") {
-        awningPrice.rate += awningPrice.rate * (surcharge / 100);
-      } else {
-        const { data: awningDataA, error: awningErrorA } = await supabase.rpc(
-          "get_awningPrice_awning",
-          {
-            _model: model,
-            _tarp: "A",
-            _line: line,
-            _exit: exit,
+      if (awningError) {
+        console.error("Error while getting awning data:", awningError);
+        return c.json({ error: "Error while getting awning data." }, 500);
+      }
+
+      if (awningData.length === 0) {
+        return c.json(Case.deepConvertKeys([], Case.toCamelCase), 200);
+      }
+
+      const awningPrice: IAwningPrice = Case.deepConvertKeys(
+        awningData[0],
+        Case.toCamelCase
+      );
+
+      if (awningPrice && awningPrice.rate === 1) {
+        awningPrice.rate = 0;
+      }
+
+      const { data: surchargeData, error: surchargeError } = await supabase
+        .from("COLOR_SURCHAGES")
+        .select("SURCHAGE_PERCENTAGE")
+        .eq("MODEL_CODE", model)
+        .eq("COLOR_DESCRIPTION", ral);
+
+      if (surchargeError) {
+        console.error("Error while getting surcharge data:", surchargeError);
+        return c.json({ error: "Error while getting surcharge data." }, 500);
+      }
+
+      if (
+        surchargeData.length > 0 &&
+        surchargeData[0]["SURCHAGE_PERCENTAGE"] !== 0
+      ) {
+        const surcharge = surchargeData[0]["SURCHAGE_PERCENTAGE"];
+
+        if (lonTarp === "A") {
+          awningPrice.rate += awningPrice.rate * (surcharge / 100);
+        } else {
+          const { data: awningDataA, error: awningErrorA } = await supabase.rpc(
+            "get_awningPrice_awning",
+            {
+              _model: model,
+              _tarp: "A",
+              _line: line,
+              _exit: exit,
+            }
+          );
+
+          if (awningErrorA) {
+            console.error("Error while getting awning data:", awningErrorA);
+            return c.json({ error: "Error while getting awning data." }, 500);
           }
-        );
 
-        if (awningErrorA) {
-          console.error("Error while getting awning data:", awningErrorA);
-          return c.json({ error: "Error while getting awning data." }, 500);
-        }
-
-        if (awningDataA.length > 0) {
-          const awningPriceA = awningDataA[0];
-          awningPrice.rate += awningPriceA.rate * (surcharge / 100);
+          if (awningDataA.length > 0) {
+            const awningPriceA = awningDataA[0];
+            awningPrice.rate += awningPriceA.rate * (surcharge / 100);
+          }
         }
       }
-    }
 
-    const rate = awningPrice.rate;
-    let dto1 = 0;
-    let dto2 = 0;
-    let dto3 = 0;
+      const rate = awningPrice.rate;
+      let dto1 = 0;
+      let dto2 = 0;
+      let dto3 = 0;
 
-    if (clientNumber) {
-      const { data: clientsFamilyDtoData, error: clientsFamilyDtoError } =
-        await supabase
-          .from("CLIENTS_FAMILY_DTO")
-          .select("DTO_1, DTO_2, DTO_3")
-          .eq("CLIENT_CODE", clientNumber)
-          .eq("FAMILY_CODE", familyCode);
+      if (clientNumber) {
+        const { data: clientsFamilyDtoData, error: clientsFamilyDtoError } =
+          await supabase
+            .from("CLIENTS_FAMILY_DTO")
+            .select("DTO_1, DTO_2, DTO_3")
+            .eq("CLIENT_CODE", clientNumber)
+            .eq("FAMILY_CODE", familyCode);
 
-      if (clientsFamilyDtoError) {
-        console.error(
-          "Error while getting clients family dto data:",
-          clientsFamilyDtoError
-        );
-        return c.json(
-          { error: "Error while getting clients family dto data." },
-          500
-        );
-      }
-
-      if (clientsFamilyDtoData.length > 0) {
-        const { DTO_1, DTO_2, DTO_3 } = clientsFamilyDtoData[0];
-
-        dto1 = DTO_1;
-        dto2 = DTO_2;
-        dto3 = DTO_3;
-
-        if (DTO_1 !== 0) {
-          awningPrice.rate -= awningPrice.rate * (DTO_1 / 100);
+        if (clientsFamilyDtoError) {
+          console.error(
+            "Error while getting clients family dto data:",
+            clientsFamilyDtoError
+          );
+          return c.json(
+            { error: "Error while getting clients family dto data." },
+            500
+          );
         }
 
-        if (DTO_2 !== 0) {
-          awningPrice.rate -= awningPrice.rate * (DTO_2 / 100);
-        }
+        if (clientsFamilyDtoData.length > 0) {
+          const { DTO_1, DTO_2, DTO_3 } = clientsFamilyDtoData[0];
 
-        if (DTO_3 !== 0) {
-          awningPrice.rate -= awningPrice.rate * (DTO_3 / 100);
+          dto1 = DTO_1;
+          dto2 = DTO_2;
+          dto3 = DTO_3;
+
+          if (DTO_1 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (DTO_1 / 100);
+          }
+
+          if (DTO_2 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (DTO_2 / 100);
+          }
+
+          if (DTO_3 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (DTO_3 / 100);
+          }
+        } else {
+          dto1 = commercialDiscount1;
+          dto2 = commercialDiscount2;
+          dto3 = commercialDiscount3;
+
+          if (commercialDiscount1 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (commercialDiscount1 / 100);
+          }
+
+          if (commercialDiscount2 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (commercialDiscount2 / 100);
+          }
+
+          if (commercialDiscount3 !== 0) {
+            awningPrice.rate -= awningPrice.rate * (commercialDiscount3 / 100);
+          }
         }
       } else {
         dto1 = commercialDiscount1;
@@ -193,38 +220,22 @@ app.get("/price", userMiddleware, getAwningPriceDesc, async (c: Context) => {
           awningPrice.rate -= awningPrice.rate * (commercialDiscount3 / 100);
         }
       }
-    } else {
-      dto1 = commercialDiscount1;
-      dto2 = commercialDiscount2;
-      dto3 = commercialDiscount3;
 
-      if (commercialDiscount1 !== 0) {
-        awningPrice.rate -= awningPrice.rate * (commercialDiscount1 / 100);
-      }
+      awningPrice.rateBeforeDiscount = rate;
+      awningPrice.dto1 = dto1;
+      awningPrice.dto2 = dto2;
+      awningPrice.dto3 = dto3;
 
-      if (commercialDiscount2 !== 0) {
-        awningPrice.rate -= awningPrice.rate * (commercialDiscount2 / 100);
-      }
-
-      if (commercialDiscount3 !== 0) {
-        awningPrice.rate -= awningPrice.rate * (commercialDiscount3 / 100);
-      }
+      return c.json(awningPrice, 200);
+    } catch (error) {
+      console.error("Internal server error:", error);
+      return c.json(
+        { error: "Internal server error while getting awning price." },
+        500
+      );
     }
-
-    awningPrice.rateBeforeDiscount = rate;
-    awningPrice.dto1 = dto1;
-    awningPrice.dto2 = dto2;
-    awningPrice.dto3 = dto3;
-
-    return c.json(awningPrice, 200);
-  } catch (error) {
-    console.error("Internal server error:", error);
-    return c.json(
-      { error: "Internal server error while getting awning price." },
-      500
-    );
   }
-});
+);
 
 app.get("/", userMiddleware, getAwningsDesc, async (c: Context) => {
   const supabase = c.get("supabase");
