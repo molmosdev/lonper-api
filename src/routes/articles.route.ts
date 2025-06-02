@@ -1,6 +1,6 @@
 import { Context, Hono } from "hono";
 import { userMiddleware } from "../middlewares/user.middleware";
-import { clientMetadataMiddleware } from "../middlewares/client-metadata.middleware"; // <-- Agrega esto
+import { clientMetadataMiddleware } from "../middlewares/client-metadata.middleware";
 import { getArticlesByIdsDesc } from "../openapi/descriptions/articlesDescriptions";
 import { IArticle, User } from "@lonper/types";
 import Case from "../utils/case";
