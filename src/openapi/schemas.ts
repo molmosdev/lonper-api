@@ -211,6 +211,11 @@ export const linkedActiveSchema = {
       nullable: true,
     },
     value: { type: "string", description: "Value", nullable: true },
+    hasValue: {
+      type: "boolean",
+      description: "Has value",
+      nullable: true,
+    },
   },
   required: ["targetFieldId", "value"],
 };
