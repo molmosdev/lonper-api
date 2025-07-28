@@ -485,3 +485,11 @@ export const addressSchema = {
   },
   required: ["city", "country", "postalCode", "province", "streetAndNumber"],
 };
+
+export const messageResponseSchema = {
+  type: "object",
+  properties: {
+    message: { type: "string", description: "Response message" },
+  },
+  required: ["message"],
+};

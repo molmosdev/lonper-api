@@ -4,16 +4,20 @@ import {
   getRequestsDesc,
   postRequestDesc,
 } from "../openapi/descriptions/requestsDescriptions";
-import { CommercialData, IFilter, IRequest, User } from "@lonper/types";
+import { CommercialData, IFilter, IRequest, User, IDelfosOrderRequest, RequestType, IRequestArticle } from "@lonper/types";
 import Case from "../utils/case";
 import { clientMetadataMiddleware } from "../middlewares/client-metadata.middleware";
+import { delfosMiddleware } from "../middlewares/delfos-middleware";
+import { DelfosClient } from "../services/delfos-client.service";
 
 const app = new Hono();
+const delfosClient = new DelfosClient();
 
 app.post(
   "/",
   userMiddleware,
   postRequestDesc,
+  delfosMiddleware,
   clientMetadataMiddleware,
   async (c: Context) => {
     const user = c.get("user");
@@ -29,17 +33,145 @@ app.post(
       body.clientNumber = commercialData.clientNumber || 0;
       body.clientName = commercialData.commercialDesc || "";
       console.log("Creating request with body:", body);
-      const { data, error } = await supabase
-        .from("REQUESTS")
-        .insert(Case.deepConvertKeys(body, Case.toUpperSnakeCase));
 
-      if (error) {
-        console.error("Error creating request:", error);
-        return c.json({ error: "Error creating request." }, 400);
+      // If it is an order, first try to create it in Delfos
+      if (body.type === RequestType.Order) {
+        // 1. Gather all fieldIds used in the config of Awning articles, ignoring those with falsy values
+        const awningArticles = body.articles.filter((a: IRequestArticle) => a.type === 'awning' && a.config && typeof a.config === 'object');
+        const allFieldIds = Array.from(new Set(
+          awningArticles.flatMap(a =>
+            Object.entries(a.config)
+              .filter(([_, value]) => value !== '' && value !== false && value !== null && value !== undefined)
+              .map(([fieldId, _]) => fieldId)
+          )
+        ));
+        let fieldIdToDelfosId: Record<string, string> = {};
+        let fieldIdToSaveOnRequest: Record<string, boolean> = {};
+        if (allFieldIds.length > 0) {
+          // 2. Query Supabase to get DELFOS_ID and SAVE_ON_REQUEST
+          const { data: fields, error: fieldsError } = await supabase
+            .from("FIELDS")
+            .select("ID,DELFOS_ID,SAVE_ON_REQUEST")
+            .in("ID", allFieldIds);
+          if (fieldsError) {
+            console.error("Error fetching FIELDS for config mapping:", fieldsError);
+            return c.json({ message: "Error fetching field mapping for Delfos." }, 500);
+          } else {
+            fieldIdToDelfosId = Object.fromEntries(
+              fields.filter(f => f.DELFOS_ID).map(f => [f.ID, f.DELFOS_ID])
+            );
+            fieldIdToSaveOnRequest = Object.fromEntries(
+              fields.map(f => [f.ID, f.SAVE_ON_REQUEST])
+            );
+          }
+        }
+        // 3. Map the config of Awning articles
+        const mappedArticles = body.articles.map((a: IRequestArticle) => {
+          if (a.type === 'awning' && a.config && typeof a.config === 'object') {
+            const mappedConfig: Record<string, any> = {};
+            for (const [fieldId, value] of Object.entries(a.config)) {
+              if (
+                value === '' ||
+                value === false ||
+                value === null ||
+                value === undefined ||
+                fieldIdToSaveOnRequest[fieldId] === false
+              ) continue;
+              const delfosId = fieldIdToDelfosId[fieldId];
+              if (delfosId) {
+                mappedConfig[delfosId] = value;
+              } else {
+                mappedConfig[fieldId] = value;
+              }
+            }
+            return { ...a, config: mappedConfig };
+          }
+          return a;
+        });
+        // 4. Build the delfosOrder with the mapped articles
+        const delfosOrder: IDelfosOrderRequest = {
+          id: body.id!,
+          reference: body.reference,
+          deliveryDate: body.deliveryDate,
+          client: body.clientNumber,
+          address: typeof body.address === "object" ? body.address.addressId : body.address,
+          articles: mappedArticles.map((a) => ({
+            id: a.id,
+            rateBeforeDiscount: a.rateBeforeDiscount,
+            units: a.units,
+            dto1: a.dto1,
+            dto2: a.dto2,
+            dto3: a.dto3,
+            total: a.total,
+            config: a.config
+          })),
+          resume: body.resume
+        };
+        try {
+          await delfosClient.fetchFromDelfos(`pedido`,
+            {
+              method: "POST",
+              body: JSON.stringify(delfosOrder)
+            },
+            c
+          );
+        } catch (delfosError) {
+          console.error("Error creating order in Delfos:", delfosError);
+          return c.json({ message: "Error creating order in Delfos." }, 500);
+        }
       }
 
-      console.log("Request created successfully:", data);
-      return c.json(data, 201);
+      // If not an order, or the Delfos call was successful, save in Supabase
+      // Search for an existing budget with the same id
+      let existingBudget = null;
+      if (body.type === RequestType.Order && body.id) {
+        const { data: found, error: findError } = await supabase
+          .from("REQUESTS")
+          .select("*")
+          .eq("ID", body.id)
+          .eq("TYPE", RequestType.Budget)
+          .maybeSingle();
+        if (findError) {
+          console.error("Error searching for existing budget:", findError);
+        }
+        existingBudget = found;
+      }
+
+      let dbResult, dbError;
+      if (existingBudget) {
+        // If exists, update the record to order
+        const { data: updated, error: updateError } = await supabase
+          .from("REQUESTS")
+          .update(Case.deepConvertKeys(body, Case.toUpperSnakeCase))
+          .eq("ID", body.id)
+          .eq("TYPE", RequestType.Budget)
+          .select();
+        dbResult = updated;
+        dbError = updateError;
+      } else {
+        // If not exists, insert as new
+        const { data: inserted, error: insertError } = await supabase
+          .from("REQUESTS")
+          .insert(Case.deepConvertKeys(body, Case.toUpperSnakeCase));
+        dbResult = inserted;
+        dbError = insertError;
+      }
+
+      // If there was a DB error, return immediately
+      if (dbError) {
+        console.error("Error creating/updating request:", dbError);
+        return c.json({ message: "Error creating or updating request." }, 400);
+      }
+
+      // Success message
+      let message = "Request created successfully.";
+      if (existingBudget) {
+        message = "Request updated from budget to order successfully.";
+      }
+      if (body.type === "order") {
+        message += " Order sent to Delfos successfully.";
+      }
+      return c.json({ message }, 201);
     } catch (error) {
       console.error("Internal server error while creating request:", error);
       return c.json(
