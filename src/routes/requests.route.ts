@@ -47,11 +47,12 @@ app.post(
         ));
         let fieldIdToDelfosId: Record<string, string> = {};
         let fieldIdToSaveOnRequest: Record<string, boolean> = {};
+        let fieldIdToDelfosType: Record<string, string> = {};
         if (allFieldIds.length > 0) {
-          // 2. Query Supabase to get DELFOS_ID and SAVE_ON_REQUEST
+          // 2. Query Supabase to get DELFOS_ID, SAVE_ON_REQUEST, DELFOS_TYPE
           const { data: fields, error: fieldsError } = await supabase
             .from("FIELDS")
-            .select("ID,DELFOS_ID,SAVE_ON_REQUEST")
+            .select("ID,DELFOS_ID,SAVE_ON_REQUEST,DELFOS_TYPE")
             .in("ID", allFieldIds);
           if (fieldsError) {
             console.error("Error fetching FIELDS for config mapping:", fieldsError);
@@ -62,6 +63,9 @@ app.post(
             );
             fieldIdToSaveOnRequest = Object.fromEntries(
               fields.map(f => [f.ID, f.SAVE_ON_REQUEST])
+            );
+            fieldIdToDelfosType = Object.fromEntries(
+              fields.map(f => [f.ID, f.DELFOS_TYPE])
             );
           }
         }
@@ -78,10 +82,21 @@ app.post(
                 fieldIdToSaveOnRequest[fieldId] === false
               ) continue;
               const delfosId = fieldIdToDelfosId[fieldId];
+              const delfosType = fieldIdToDelfosType[fieldId];
+              let typedValue: any = value;
+              if (delfosType === 'NUMBER') {
+                const numValue = typeof value === 'string' ? parseFloat(value) : Number(value);
+                if (isNaN(numValue)) continue;
+                typedValue = numValue;
+              } else if (delfosType === 'BOOLEAN') {
+                typedValue = value === true || value === 'true';
+              } else if (delfosType === 'TEXT') {
+                typedValue = String(value);
+              }
               if (delfosId) {
-                mappedConfig[delfosId] = value;
+                mappedConfig[delfosId] = typedValue;
               } else {
-                mappedConfig[fieldId] = value;
+                mappedConfig[fieldId] = typedValue;
               }
             }
             return { ...a, config: mappedConfig };
