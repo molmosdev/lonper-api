@@ -23,7 +23,7 @@ app.post("/", userMiddleware, postFieldDesc, async (c: Context) => {
   const supabase = c.get("supabase");
 
   try {
-    const { name, description, saveOnRequest, groupId, delfosId } =
+    const { name, description, saveOnRequest, groupId, delfosId, delfosType } =
       await c.req.json();
 
     const { data: fields, error: fetchError } = await supabase
@@ -45,6 +45,7 @@ app.post("/", userMiddleware, postFieldDesc, async (c: Context) => {
         GROUP_ID: groupId,
         SAVE_ON_REQUEST: saveOnRequest,
         DELFOS_ID: delfosId,
+        DELFOS_TYPE: delfosType,
       },
     ]);
 
@@ -69,7 +70,7 @@ app.put("/:id", userMiddleware, putFieldDesc, async (c: Context) => {
   const id = c.req.param("id");
 
   try {
-    const { name, description, saveOnRequest, delfosId } = await c.req.json();
+    const { name, description, saveOnRequest, delfosId, delfosType } = await c.req.json();
 
     const { data, error } = await supabase
       .from("FIELDS")
@@ -78,6 +79,7 @@ app.put("/:id", userMiddleware, putFieldDesc, async (c: Context) => {
         DESCRIPTION: description,
         SAVE_ON_REQUEST: saveOnRequest,
         DELFOS_ID: delfosId,
+        DELFOS_TYPE: delfosType,
       })
       .eq("ID", id);
 
