@@ -32,7 +32,6 @@ app.post(
       const body: IRequest = await c.req.json();
       body.clientNumber = commercialData.clientNumber || 0;
       body.clientName = commercialData.commercialDesc || "";
-      console.log("Creating request with body:", body);
 
       // If it is an order, first try to create it in Delfos
       if (body.type === RequestType.Order) {
@@ -122,6 +121,9 @@ app.post(
           })),
           resume: body.resume
         };
+
+        console.log("Delfos order:", JSON.stringify(delfosOrder, null, 2));
+        
         try {
           await delfosClient.fetchFromDelfos(`pedido`,
             {
