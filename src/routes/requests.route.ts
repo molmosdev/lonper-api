@@ -88,7 +88,7 @@ app.post(
                 if (isNaN(numValue)) continue;
                 typedValue = numValue;
               } else if (delfosType === 'BOOLEAN') {
-                typedValue = value === true || value === 'true';
+                typedValue = (value === true || value === 'true') ? 1 : 0;
               } else if (delfosType === 'TEXT') {
                 typedValue = String(value);
               }
